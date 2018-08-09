@@ -1,10 +1,10 @@
 # Filename: Makefile
 # Author: Scrubbs
-# Date: 2018-8-7
-# Description: molopt Makefile
+# Date: 2018-8-9
+# Description: brent Makefile
 
 #Project Name (executable)
-PROJECT = molopt
+PROJECT = brent
 
 #Compiler
 CXX = g++

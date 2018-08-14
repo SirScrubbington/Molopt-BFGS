@@ -8,6 +8,48 @@
 
 #include "molopt.h"
 
+	
+void printGradients(double * gradients, int n)
+{
+	for(int i=0;i<n;i++)
+		printf("(%i , %f)\n",i,gradients[i]);
+	printf("\n");
+}
+
+void printAlphas(double * alphas, int n)
+{
+	for(int i=0;i<n;i++)
+		printf("%f\n",alphas[i]);
+	printf("\n");
+}
+	
+void printReal(double * real, int n)
+{
+	for(int i=0;i<n;i++)
+		printf("%f\n",real[i]);
+	printf("\n");
+}
+
+void printCoords(Point * coords, int n)
+{
+	for(int i=0;i<n;i++)
+		printf("(%f %f)\n",coords[i].x,coords[i].y);
+	printf("\n");
+}
+
+void printDistance(Matrix<double> * distance, int n)
+{
+	for(int i=0;i<distance->y; i++)
+	{
+		for(int j=0;j<distance->x;j++)
+		{
+			printf("%f,",distance->get(i,j));
+		}
+		printf("\n");
+	}
+}
+
+
 double * getGradientList(double * gradients, double * real, Point * coords, Matrix<double> * distance, int n)
 {
 	for(int m=0;m<n;m++)
@@ -17,12 +59,6 @@ double * getGradientList(double * gradients, double * real, Point * coords, Matr
 		{
 			for(int j=m+1;j<n;j++)
 			{
-				//printf("%f\n",pow(distance->get(i,j),14.0f));
-				//printf("%f\n",pow(distance->get(i,j),8.0f));
-				
-				//printf("%f\n",1.0f / pow(distance->get(i,j),14.0f));
-				//printf("%f\n",1.0f / pow(distance->get(i,j),8.0f));
-				
 				gradients[m-1] += 
 					((1.0f / pow(distance->get(i,j),14.0f)) - (1.0f / pow(distance->get(i,j),8.0f))) * 
 					((coords[i].x-coords[j].x) * (coords[m].y - coords[i].y) + 
@@ -41,8 +77,8 @@ double * getRealAngleList(double * alphas, double * real, int n)
 	for(int i=1;i<n;i++)
 	{
 		real[i] = real[i-1] + alphas[i];
-		//if (real[i] > (DEG2RAD*140))
-		//	real[i] -= (DEG2RAD*140);
+		if(real[i] >= DEG2RAD*360)
+			real[i] -= DEG2RAD*360;
 	}
 	return real;
 }
@@ -73,14 +109,13 @@ Matrix<double> * getEulerianDistanceMatrix(Point * coords, Matrix<double> * dist
 	{
 		for(int j=0;j<n;j++)
 		{
-			//i == j ? distance.set(i,j,0.0f) : distance.set(i,j,getR());
 			if (i==j)
 			{
 				distance->set(i,j,0.0f);
 			}
 			else
 			{
-				Point d = (coords[i] - coords[j]).absolute();
+				Point d = (coords[i] - coords[j]);
 				distance->set(i,j,getR(d.x,d.y));
 			}
 		}
@@ -91,7 +126,7 @@ Matrix<double> * getEulerianDistanceMatrix(Point * coords, Matrix<double> * dist
 double getSystemEnergy(Point * coords, Matrix<double> * distance, int n)
 {
 	double V = 0;
-
+	/*
 	for(int i=0;i<n;i++)
 	{
 		for(int j=i;j<n;j++)
@@ -106,8 +141,20 @@ double getSystemEnergy(Point * coords, Matrix<double> * distance, int n)
 			
 			V = V + ((1.0f/pow(distance->get(i,j),12.0f))-(2.0f/pow(distance->get(i,j),6.0f)));
 		}
-	}
+	}*/
 	
+	for(int j=0;j<n;j++)
+		for(int i=0;i<j;i++)
+		{
+			double onepart,twopart,v;
+			onepart = (1.0f / pow(distance->get(i,j),12.0f));
+			twopart = (2.0f / pow(distance->get(i,j),6.0f));
+			
+			v = ((1.0f/pow(distance->get(i,j),12.0f))-(2.0f/pow(distance->get(i,j),6.0f)));
+
+			V = V + v;
+			
+		}
 	return V;
 	
 }
@@ -128,8 +175,6 @@ int main(int argc, char ** argv, char ** envp)
 	
 	double * alphas = (double*)malloc(sizeof(*alphas)*n);
 	
-	double temp;
-	
 	double * real = (double*)malloc(sizeof(*real)*n);
 	
 	double * gradients = (double*)malloc(sizeof(*gradients)*n); 
@@ -145,61 +190,44 @@ int main(int argc, char ** argv, char ** envp)
 	
 	coords[1]={1.0f,0.0f};
 	
-	for(int i=2;i<n;i++)
-		alphas[i]+= (DEG2RAD*6.0f);
-	
-	for(int i=0;i<n;i++)
-		printf("%f\n",alphas[i]);
-	printf("\n");
 	
 	real = getRealAngleList(alphas,real,n);
 	
-	for(int i=0;i<n;i++)
-		printf("%f\n",real[i]);
-	printf("\n");
-	
 	coords = getSystemCoordinates(real,coords,n);
 	
-	for(int i=0;i<n;i++)
-		printf("(%f %f)\n",coords[i].x,coords[i].y);
-	printf("\n");
-	
 	distance = getEulerianDistanceMatrix(coords,distance,n);
-	
-	for(int i=0;i<distance->y; i++)
-	{
-		for(int j=0;j<distance->x;j++)
-		{
-			printf("%f,",distance->get(i,j));
-		}
-		printf("\n");
-	}
-	
+
 	double E = getSystemEnergy(coords,distance,n);
 	
 	gradients = getGradientList(gradients,real,coords,distance,n);
-	
-	for(int i=0;i<n;i++)
-		printf("(%i , %f)\n",i,gradients[i]);
-	printf("\n");
-	
+
 	printf("%f\n",E);
 	
-	double temp - 10000, cool = 0.003;
+	double temperature = 10000.0f, cool = 0.003f;
 	
 	double pE;
 	
-	kMax = 100;
+	double temp;
 	
-	while(temp > 1)
+	std::mt19937 rng (std::random_device{}());
+	std::uniform_int_distribution<> dist (-90,90);
+	
+	while(temperature > 1.0f)
 	{	
-
-		T = temperature(k / kMax);
-
 		for(int i=0;i<n;i++)
 		{
+			pE = E;
 			temp = alphas[i];
-			alphas[i] = ((double)(rand()%90)-90)*DEG2RAD;
+			alphas[i] = (double)(dist(rng))*DEG2RAD;
+			E = getSystemEnergy(coords,distance,n);
+			
+			printf("%f, %f\n",E,pE);
+			
+			if(E > pE)
+			{
+				alphas[i] = temp;
+				E = pE;
+			}
 		}
 		
 		real = getRealAngleList(alphas,real,n);
@@ -212,9 +240,12 @@ int main(int argc, char ** argv, char ** envp)
 		
 		gradients = getGradientList(gradients,real,coords,distance,n);
 		
-		temp *= 1 - cool;
+		temperature *= (1.0f - cool);
+		
+		printf("%f\n",temperature);
 		
 	}
+	
 	return 0;
 }
 

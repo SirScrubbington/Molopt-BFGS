@@ -8,6 +8,7 @@
 
 #include "bfgs/lbfgs.c"
 
+#include <random>
 #include <cfloat>
 #include <cstdio>
 #include <cstdlib>

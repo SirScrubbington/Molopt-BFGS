@@ -4,7 +4,7 @@
 # Description: brent Makefile
 
 #Project Name (executable)
-PROJECT = brent
+PROJECT = molopt.exe
 
 #Compiler
 CXX = g++

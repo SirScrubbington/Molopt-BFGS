@@ -8,24 +8,29 @@
 
 #include "bfgs/lbfgs.c"
 
-#include <random>
-#include <cfloat>
+#include "Molecule.h"
+
 #include <cstdio>
 #include <cstdlib>
-#include <stdexcept>
+
+#include <fstream>
+#include <iostream>
 
 #define _USE_MATH_DEFINES
 
 #include <cmath>
 
-#define DEG2RAD (M_PI/180)
-#define RAD2DEG (180/M_PI)
+#ifndef DEG2RAD
+	#define DEG2RAD (M_PI/180.0f)
+#endif // DEG2RAD
 
-#define NO_SOLUTION 99
+#ifndef RAD2DEG
+	#define RAD2DEG (180.0f/M_PI)
+#endif // RAD2DEG
 
-const double tolerance = pow(10,-6);
+const lbfgsfloatval_t tolerance = pow(10,-6);
 
-const double optimal[] = {
+const lbfgsfloatval_t optimal[] = {
 	-1.0f,
 	-3.0f,
 	-5.1f,
@@ -80,69 +85,12 @@ const double optimal[] = {
 	-146.0f,
 	-149.3f,
 	-152.7f,
-	NO_SOLUTION,
-	NO_SOLUTION,
-	NO_SOLUTION,
-	NO_SOLUTION,
-	NO_SOLUTION,
+	-154.7f, // interpolated
+	-157.4f, // interpolated
+	-160.2f, // interpolated
+	-163.0f, // interpolated
+	-164.0f, // interpolated
 	-166.1f
-	};
-
-template <class T>
-class Matrix
-{
-public:
-	int x,y;
-	T * data;
-
-	Matrix(int x, int y)
-	{
-		this->x = x;
-		this->y = y;
-		data = (T*)malloc(sizeof(*data)*x*y);
-	}
-	
-	inline void set(int i, int j, double v)
-	{
-		if((i*x+j) > (x*y))
-			throw std::invalid_argument("Attempting to access out of bounds index");
-		
-		data[i*x+j]=v;
-	}
-	
-	inline T get(int i, int j)
-	{
-		if((i*x+j) > (x*y))
-			throw std::invalid_argument("Attempting to access out of bounds index");
-		
-		return data[i*x+j];
-	}
 };
-	
-struct Point 
-{
-	double x,y;
-	inline Point operator=(Point a)
-	{
-		x=a.x;
-		y=a.y;
-		return a;
-	}
-	inline Point operator+(Point a)
-	{
-		return {a.x+x,a.y+y};
-	}
-	inline Point operator-(Point a)
-	{
-		return {x-a.x,y-a.y};
-	}
-	inline bool operator==(Point a)
-	{
-		return (a.x==x && a.y==y);
-	}
-	inline Point absolute()
-	{
-		return {fabs(x),fabs(y)};
-	}
-};
+
 #endif // I_NfAv5xV18d4u1Tj758VJpX4i18fsL

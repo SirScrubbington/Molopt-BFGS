@@ -8,49 +8,9 @@
 
 #include "molopt.h"
 
-	
-void printGradients(double * gradients, int n)
-{
-	for(int i=0;i<n;i++)
-		printf("(%i , %f)\n",i,gradients[i]);
-	printf("\n");
-}
+/*
 
-void printAlphas(double * alphas, int n)
-{
-	for(int i=0;i<n;i++)
-		printf("%f\n",alphas[i]);
-	printf("\n");
-}
-	
-void printReal(double * real, int n)
-{
-	for(int i=0;i<n;i++)
-		printf("%f\n",real[i]);
-	printf("\n");
-}
-
-void printCoords(Point * coords, int n)
-{
-	for(int i=0;i<n;i++)
-		printf("(%f %f)\n",coords[i].x,coords[i].y);
-	printf("\n");
-}
-
-void printDistance(Matrix<double> * distance, int n)
-{
-	for(int i=0;i<distance->y; i++)
-	{
-		for(int j=0;j<distance->x;j++)
-		{
-			printf("%f,",distance->get(i,j));
-		}
-		printf("\n");
-	}
-}
-
-
-double * getGradientList(double * gradients, double * real, Point * coords, Matrix<double> * distance, int n)
+lbfgsfloatval_t * getGradientList(lbfgsfloatval_t * gradients, lbfgsfloatval_t * real, Point * coords, Matrix<lbfgsfloatval_t> * distance, int n)
 {
 	for(int m=0;m<n;m++)
 	{
@@ -70,94 +30,156 @@ double * getGradientList(double * gradients, double * real, Point * coords, Matr
 	return gradients;
 }
 
-double * getRealAngleList(double * alphas, double * real, int n)
+lbfgsfloatval_t lbfgsGradientCallback
+(
+	void * instance, 
+	const lbfgsfloatval_t *x,
+	lbfgsfloatval_t *g,
+	const int n,
+	const lbfgsfloatval_t step
+)
 {
-	real[0] = alphas[0];
+	Matrix<lbfgsfloatval_t> * distance = (Matrix<lbfgsfloatval_t>*)instance;
+	//g = getGradientList(g,
+}
+
+int lbfgsfunc
+(
+	int n,
+	lbfgsfloatval_t *x,
+	lbfgsfloatval_t *ptrFx,
+	lbfgs_evaluate_t gradientCallback,
+	lbfgs_progress_t progressCallback,
+	void * instance,
+	lbfgs_parameter_t *param
+)
+{
+	return lbfgs(n,x,ptrFx,gradientCallback,progressCallback,instance,param);
+}
+
+lbfgsfloatval_t updateSystem(lbfgsfloatval_t * alphas, lbfgsfloatval_t * real, Point * coords, Matrix<lbfgsfloatval_t> * distance, int n)
+{
+	real = getRealAngleList(alphas,real,n);
+	coords = getSystemCoordinates(real,coords,n);
+	distance = getEulerianDistanceMatrix(coords,distance,n);
+	return getSystemEnergy(coords,distance,n);
+}
+
+bool accept(lbfgsfloatval_t E, lbfgsfloatval_t pE, lbfgsfloatval_t temp)
+{	
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(0,100);
+	auto rand = std::bind(distribution,generator);
 	
-	for(int i=1;i<n;i++)
-	{
-		real[i] = real[i-1] + alphas[i];
-		if(real[i] >= DEG2RAD*360)
-			real[i] -= DEG2RAD*360;
-	}
-	return real;
-}
-
-Point getCoords(double distance, double angle)
-{
-	return {distance*cos(angle),distance*sin(angle)};
-}
-
-Point * getSystemCoordinates(double * real, Point * coords, int n)
-{
-	for(int i=2;i<n;i++)
-	{
-		coords[i] = coords[i-1] + getCoords(1.0f,real[i-1]);
-	}	
+	if (isnan(E))
+		return false;
 	
-	return coords;
+	if (E <= pE)
+		return true;
+	
+	lbfgsfloatval_t P = exp((-(E-pE))/(temp*10));
+	+
+	printf("%f, %f, %f, %f\n",E, pE, temp, P);
+	
+	if((P*100) < rand())
+		return true;
+	return false;
 }
 
-double getR(double x, double y)
+lbfgsfloatval_t moloptAnnealingBFGS(lbfgsfloatval_t * alphas, 
+						   lbfgsfloatval_t * gradients, 
+						   lbfgsfloatval_t * real, 
+						   Point * coords,
+						   Matrix<lbfgsfloatval_t> * distance,
+						   int n, 
+						   int tMax
+)
 {
-	return sqrt(pow(x,2) + pow(y,2));
-}
 
-Matrix<double> * getEulerianDistanceMatrix(Point * coords, Matrix<double> * distance, int n)
-{
-	for(int i=0;i<n;i++)
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(-180,180);
+	
+	auto randAngle = std::bind(distribution,generator);
+
+	lbfgsfloatval_t E = updateSystem(alphas,real,coords,distance,n),pE,prev;
+
+	lbfgsfloatval_t err = E - optimal[n-2];
+	
+	int k = 0;
+	
+	for(int t = 0; t < tMax; t++)
 	{
-		for(int j=0;j<n;j++)
+		
+		lbfgsfloatval_t temp = (lbfgsfloatval_t)t/(lbfgsfloatval_t)tMax;
+		
+		printf("%i, %f\n",t,temp);
+		
+		k++;
+		
+		for(int j = 0; j < k; j++)
 		{
-			if (i==j)
+			
+			printf("%i, %i\n",j,k);
+			
+			for(int i = 1;i < n; i++)
 			{
-				distance->set(i,j,0.0f);
-			}
-			else
-			{
-				Point d = (coords[i] - coords[j]);
-				distance->set(i,j,getR(d.x,d.y));
+				
+				printf("%i\n",i);
+				
+				
+				pE = E;
+				
+				
+				
+				prev = alphas[i];
+				alphas[i]+=(DEG2RAD*randAngle());
+				E = updateSystem(alphas,real,coords,distance,n);
+				
+				if accept(E,pE,temp)
+				{
+					
+				}
+				else
+				{
+					
+				}
+				
 			}
 		}
 	}
-	return distance;
+
+	return E;
 }
 
-double getSystemEnergy(Point * coords, Matrix<double> * distance, int n)
+lbfgsfloatval_t moloptGeneticBFGS(lbfgsfloatval_t * alphas, 
+						   lbfgsfloatval_t * gradients, 
+						   lbfgsfloatval_t * real, 
+						   Point * coords,
+						   Matrix<lbfgsfloatval_t> * distance,
+						   int n,
+						   int populationSiz,
+						   int keepSiz
+)
 {
-	double V = 0;
-	/*
-	for(int i=0;i<n;i++)
-	{
-		for(int j=i;j<n;j++)
-		{
-			
-			if (i==j)
-				continue;
-			
-			//Point distance = (coords[i] - coords[j]).absolute();
-			
-			//double r = getR(distance.x,distance.y);
-			
-			V = V + ((1.0f/pow(distance->get(i,j),12.0f))-(2.0f/pow(distance->get(i,j),6.0f)));
-		}
-	}*/
+	lbfgsfloatval_t ** gAlphas = (lbfgsfloatval_t**)malloc(sizeof(*gAlphas)*populationSiz);
+	lbfgsfloatval_t ** gGradients = (lbfgsfloatval_t**)malloc(sizeof(*gGradients)*populationSiz);
+	lbfgsfloatval_t ** gReal = (lbfgsfloatval_t**)malloc(sizeof(*gReal)*populationSiz);
+	Point ** gCoords = (Point**)malloc(sizeof(*gCoords)*populationSiz);
 	
-	for(int j=0;j<n;j++)
-		for(int i=0;i<j;i++)
-		{
-			double onepart,twopart,v;
-			onepart = (1.0f / pow(distance->get(i,j),12.0f));
-			twopart = (2.0f / pow(distance->get(i,j),6.0f));
-			
-			v = ((1.0f/pow(distance->get(i,j),12.0f))-(2.0f/pow(distance->get(i,j),6.0f)));
-
-			V = V + v;
-			
-		}
-	return V;
+	Matrix<lbfgsfloatval_t> ** gDistance = (Matrix<lbfgsfloatval_t>**)malloc(sizeof(*gDistance)*populationSiz);
 	
+	gAlphas[0]=alphas;
+	gGradients[0]=gradients;
+	gReal[0]=real;
+	gCoords[0]=coords;
+	gDistance[0]=distance;
+	
+	lbfgsfloatval_t pE = getSystemEnergy(coords,distance,n);
+	
+	return pE;
 }
+
+*/
 
 int main(int argc, char ** argv, char ** envp)
 {
@@ -171,80 +193,17 @@ int main(int argc, char ** argv, char ** envp)
 	if(!n)
 		return 0;
 	
-	Matrix<double> * distance = new Matrix<double>(n,n);
+	Molecule<lbfgsfloatval_t> * solution = new Molecule<lbfgsfloatval_t>(n);
 	
-	double * alphas = (double*)malloc(sizeof(*alphas)*n);
-	
-	double * real = (double*)malloc(sizeof(*real)*n);
-	
-	double * gradients = (double*)malloc(sizeof(*gradients)*n); 
-	
-	Point * coords = (Point*)malloc(sizeof(*coords)*n);
-	
+	std::ofstream fs;
+	fs.open("alphas.txt");
 	for(int i=0;i<n;i++)
 	{
-		alphas[i]=0.0f;
-		gradients[i]=0.0f;
-		coords[i]={0.0f,0.0f};
+		//fs << coords[i].x << "," << coords[i].y << "\n";
 	}
+	fs.close();
 	
-	coords[1]={1.0f,0.0f};
-	
-	
-	real = getRealAngleList(alphas,real,n);
-	
-	coords = getSystemCoordinates(real,coords,n);
-	
-	distance = getEulerianDistanceMatrix(coords,distance,n);
-
-	double E = getSystemEnergy(coords,distance,n);
-	
-	gradients = getGradientList(gradients,real,coords,distance,n);
-
-	printf("%f\n",E);
-	
-	double temperature = 10000.0f, cool = 0.003f;
-	
-	double pE;
-	
-	double temp;
-	
-	std::mt19937 rng (std::random_device{}());
-	std::uniform_int_distribution<> dist (-90,90);
-	
-	while(temperature > 1.0f)
-	{	
-		for(int i=0;i<n;i++)
-		{
-			pE = E;
-			temp = alphas[i];
-			alphas[i] = (double)(dist(rng))*DEG2RAD;
-			E = getSystemEnergy(coords,distance,n);
-			
-			printf("%f, %f\n",E,pE);
-			
-			if(E > pE)
-			{
-				alphas[i] = temp;
-				E = pE;
-			}
-		}
-		
-		real = getRealAngleList(alphas,real,n);
-
-		coords = getSystemCoordinates(real,coords,n);
-
-		distance = getEulerianDistanceMatrix(coords,distance,n);
-		
-		double E = getSystemEnergy(coords,distance,n);
-		
-		gradients = getGradientList(gradients,real,coords,distance,n);
-		
-		temperature *= (1.0f - cool);
-		
-		printf("%f\n",temperature);
-		
-	}
+	//printf("%f\n",optcost);
 	
 	return 0;
 }

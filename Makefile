@@ -13,7 +13,7 @@ CXX = g++
 CXXFLAGS=
 
 #Source Files
-SOURCE = $(wildcard *.c *.cpp)
+SOURCE = $(wildcard *.cpp)
 
 #Object Files
 OBJECTS = $(SOURCE:.cpp=.o)
@@ -29,4 +29,4 @@ $(PROJECT): $(OBJECTS)
 #Clean up additional files
 .PHONY: clean
 clean:
-	rm -f *.o *.exe
+	rm -f *.o *.exe *.stackdump *.txt

@@ -10,6 +10,68 @@
 
 typedef double(*temperaturefunc)(double x);
 
+lbfgsfloatval_t cfdd
+(
+	lbfgsfloatval_t fa,
+	lbfgsfloatval_t fb,
+	lbfgsfloatval_t h
+)
+{
+	return ((fa) - (fb))/h;
+}
+
+lbfgsfloatval_t gradientCallbackCFDD
+(
+	void * instance,
+	const lbfgsfloatval_t *x,
+	lbfgsfloatval_t *g,
+	const int n,
+	const lbfgsfloatval_t step
+)
+{
+	Molecule<lbfgsfloatval_t> * mol = (Molecule<lbfgsfloatval_t>*)instance;
+	
+	lbfgsfloatval_t a, b, fa, fb,temp,diffstep,cost;
+	
+	for(int i=0;i<n;i++)
+	{
+		//printf("%f, %f\n",x[i],mol->alphas[i]);
+		mol->alphas[i] = x[i];
+	}
+	cost = mol->updateSystem();
+	
+	diffstep = 0.1;
+	
+	for(int i=1;i<n;i++)
+	{
+		temp = mol->alphas[i];
+		
+		a = mol->alphas[i] - diffstep;
+		b = mol->alphas[i] + diffstep;
+		
+		mol->alphas[i] = a;
+		
+		fa = mol->updateSystem();
+		
+		mol->alphas[i] = b;
+		
+		fb = mol->updateSystem();
+		
+		mol->alphas[i] = temp;
+		
+		mol->gradients[i] = cfdd(fa,fb,diffstep);
+		
+		g[i] = mol->gradients[i];
+		
+		//printf("%f\n",g[i]);
+		
+	}
+	
+	//printf("\n");
+	
+	return cost;
+}
+
 lbfgsfloatval_t gradientCallback
 (
 	void * instance,
@@ -20,6 +82,9 @@ lbfgsfloatval_t gradientCallback
 )
 {
 	Molecule<lbfgsfloatval_t> * mol = (Molecule<lbfgsfloatval_t>*)instance;
+	
+	for(int i=0;i<n;i++)
+		mol->alphas[i] = x[i];
 	
 	auto cost = mol->updateSystem();
 	
@@ -44,10 +109,13 @@ lbfgsfloatval_t gradientCallback
 		gradients[m] *= -12.0f;
 	}
 	
-	mol->printGradients();
+	//mol->printGradients();
 	
-	g = gradients;
+	//g = gradients;
 
+	for(int i=0;i<n;i++)
+		g[i] = gradients[i];
+	
 	return cost;
 }
 
@@ -146,7 +214,9 @@ lbfgsfloatval_t moloptAnnealingBFGS
 	
 	//printf("%f\n",mol->updateSystem());
 	
-	//lbfgs(mol->n,mol->alphas,mol->alphas,gradientCallback,progressCallback,mol,&param);
+	lbfgsfloatval_t * bfgsval = (lbfgsfloatval_t*)malloc(sizeof(lbfgsfloatval_t)*n);
+	
+	lbfgs(mol->n,mol->alphas,bfgsval,gradientCallback,progressCallback,mol,&param);
 	
 	*save = mol;
 	

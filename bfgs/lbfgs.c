@@ -412,6 +412,10 @@ int lbfgs(
     /* Evaluate the function value and its gradient. */
     fx = cd.proc_evaluate(cd.instance, x, g, cd.n, 0);
 	
+	//printf("print in lbfgs code\nN: %i\n",n);
+	//for(int i=0;i<cd.n;i++)
+		//printf("%f\n",g[i]);
+	
     if (0. != param.orthantwise_c) {
         /* Compute the L1 norm of the variable and add it to the object value. */
         xnorm = owlqn_x1norm(x, param.orthantwise_start, param.orthantwise_end);
@@ -448,6 +452,7 @@ int lbfgs(
     }
     if (xnorm < 1.0) xnorm = 1.0;
     if (gnorm / xnorm <= param.epsilon) {
+		//printf("%f, %f, %f\n",gnorm,xnorm,param.epsilon);
         ret = LBFGS_ALREADY_MINIMIZED;
         goto lbfgs_exit;
     }
@@ -461,7 +466,7 @@ int lbfgs(
     end = 0;
 	
     for (;;) {
-		printf("%i\n",ctvar++);
+		//printf("%i\n",ctvar++);
         /* Store the current position and gradient vectors. */
         veccpy(xp, x, n);
         veccpy(gp, g, n);
@@ -508,6 +513,7 @@ int lbfgs(
         if (gnorm / xnorm <= param.epsilon) {
             /* Convergence. */
             ret = LBFGS_SUCCESS;
+			//printf("we done nigga, we hittin %f, %f\n",gnorm,xnorm);
             break;
         }
 

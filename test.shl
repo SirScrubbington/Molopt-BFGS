@@ -1,5 +1,6 @@
 touch img/t.png
 rm img/*.png
+rm results.txt
 
 for i in {2..61}
 do

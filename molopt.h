@@ -6,19 +6,25 @@
 #ifndef I_NfAv5xV18d4u1Tj758VJpX4i18fsL
 #define I_NfAv5xV18d4u1Tj758VJpX4i18fsL
 
-#include "bfgs/lbfgs.c"
-
-#include "Molecule.h"
-
-#include <cstdio>
-#include <cstdlib>
-
+#include <random>
 #include <fstream>
 #include <iostream>
+#include <functional>
+
+#include <ctime>
+#include <cfloat>
+#include <cstdio>
+#include <cstdlib>
 
 #define _USE_MATH_DEFINES
 
 #include <cmath>
+
+#include "bfgs/lbfgs.c"
+
+#include "Point.h"
+#include "Matrix.h"
+#include "Molecule.h"
 
 #ifndef DEG2RAD
 	#define DEG2RAD (M_PI/180.0f)
@@ -52,7 +58,7 @@ const lbfgsfloatval_t optimal[] = {
 	-47.5f,
 	-50.8f,
 	-53.0f,
-	-56.3f
+	-56.3f,
 	-59.6f,
 	-61.8f,
 	-65.1f,

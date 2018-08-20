@@ -10,7 +10,7 @@ PROJECT = molopt.exe
 CXX = g++
 
 #Compiler Directions
-CXXFLAGS=
+CXXFLAGS=-g
 
 #Source Files
 SOURCE = $(wildcard *.cpp)

@@ -104,6 +104,7 @@ public:
 	{
 		for(int i=2;i<n;i++)
 		{
+			//printf("%i\n",i);
 			coords[i] = coords[i-1] + getCoords(1.0f,real[i-1]);
 		}	
 		
@@ -151,6 +152,9 @@ public:
 		
 	Molecule(int n)
 	{
+		
+		this->n = n;
+		
 		distance = new Matrix<moltyp>(n,n);
 		
 		alphas = (moltyp*)malloc(sizeof(*alphas)*n);
@@ -169,10 +173,70 @@ public:
 		coords[1]={1.0f,0.0f};
 		
 		real = getRealAngleList();
-
+		
 		coords = getSystemCoordinates();
 		
 		distance = getEulerianDistanceMatrix();
+		
+	}
+	
+	moltyp updateSystem()
+	{
+		real = getRealAngleList();
+		coords = getSystemCoordinates();
+		distance = getEulerianDistanceMatrix();
+		return getSystemEnergy();
+	}
+	
+	// Check entire system for crossovers
+	Point hasCrossovers()
+	{
+		
+		Point * a, * b;
+		
+		for(int i = 0;i < n;i++)
+		{
+			for(int j = 0; j < n; j++)
+			{
+				if(checkCrossover(i,j))
+				{
+					return {i,j};
+				}
+			}
+		}
+	}
+	
+	// Check if crossover exists at index
+	bool checkCrossover(int a, int b)
+	{
+		
+	}
+	
+	Molecule(const Molecule<moltyp> &cpy)
+	{
+		
+		n = cpy.n;
+		
+		distance = new Matrix<moltyp>(n,n);
+		
+		alphas = (moltyp*)malloc(sizeof(*alphas)*n);
+		real = (moltyp*)malloc(sizeof(*real)*n);
+		gradients = (moltyp*)malloc(sizeof(*gradients)*n); 
+		
+		coords = (Point*)malloc(sizeof(*coords)*n);
+		
+		for(int i = 0 ; i < n ; i++)
+		{
+			alphas[i] = cpy.alphas[i];
+			real[i] = cpy.real[i];
+			gradients[i] = cpy.gradients[i];
+			coords[i] = cpy.coords[i];
+			
+			for(int j = 0 ; j < n ; j++)
+			{
+				distance->set(i,j,cpy.distance->get(i,j));
+			}
+		}
 	}
 		
 	~Molecule()

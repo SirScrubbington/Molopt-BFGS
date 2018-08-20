@@ -253,7 +253,7 @@ int lbfgs(
     )
 {
     int ret;
-    int i, j, k, ls, end, bound;
+    int i, j, k, ls, end, bound,ctvar;
     lbfgsfloatval_t step;
 
     /* Constant parameters and their default values. */
@@ -392,6 +392,7 @@ int lbfgs(
 
     /* Initialize the limited memory. */
     for (i = 0;i < m;++i) {
+		//printf("%i\n",i);
         it = &lm[i];
         it->alpha = 0;
         it->ys = 0;
@@ -410,6 +411,7 @@ int lbfgs(
 
     /* Evaluate the function value and its gradient. */
     fx = cd.proc_evaluate(cd.instance, x, g, cd.n, 0);
+	
     if (0. != param.orthantwise_c) {
         /* Compute the L1 norm of the variable and add it to the object value. */
         xnorm = owlqn_x1norm(x, param.orthantwise_start, param.orthantwise_end);
@@ -419,7 +421,7 @@ int lbfgs(
             param.orthantwise_c, param.orthantwise_start, param.orthantwise_end
             );
     }
-
+	
     /* Store the initial value of the objective function. */
     if (pf != NULL) {
         pf[0] = fx;
@@ -449,7 +451,7 @@ int lbfgs(
         ret = LBFGS_ALREADY_MINIMIZED;
         goto lbfgs_exit;
     }
-
+	
     /* Compute the initial step:
         step = 1.0 / sqrt(vecdot(d, d, n))
      */
@@ -457,7 +459,9 @@ int lbfgs(
 
     k = 1;
     end = 0;
+	
     for (;;) {
+		printf("%i\n",ctvar++);
         /* Store the current position and gradient vectors. */
         veccpy(xp, x, n);
         veccpy(gp, g, n);
@@ -630,13 +634,14 @@ lbfgs_exit:
         }
         vecfree(lm);
     }
+
     vecfree(pg);
     vecfree(w);
     vecfree(d);
     vecfree(gp);
     vecfree(g);
     vecfree(xp);
-
+	
     return ret;
 }
 
@@ -732,8 +737,6 @@ static int line_search_backtracking(
         (*stp) *= width;
     }
 }
-
-
 
 static int line_search_backtracking_owlqn(
     int n,

@@ -3,9 +3,7 @@ rm img/*.png
 
 for i in {2..61}
 do
-  echo $i
   ./molopt.exe $i
   python graph.py
   rm alphas.txt
-  #read -p "Press enter to continue"
 done

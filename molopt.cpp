@@ -8,181 +8,177 @@
 
 #include "molopt.h"
 
-/*
+typedef double(*temperaturefunc)(double x);
 
-lbfgsfloatval_t * getGradientList(lbfgsfloatval_t * gradients, lbfgsfloatval_t * real, Point * coords, Matrix<lbfgsfloatval_t> * distance, int n)
-{
-	for(int m=0;m<n;m++)
-	{
-		gradients[m]=0.0f;
-		for(int i=0;i<m-1;i++)
-		{
-			for(int j=m+1;j<n;j++)
-			{
-				gradients[m-1] += 
-					((1.0f / pow(distance->get(i,j),14.0f)) - (1.0f / pow(distance->get(i,j),8.0f))) * 
-					((coords[i].x-coords[j].x) * (coords[m].y - coords[i].y) + 
-					 (coords[i].y-coords[j].y) * (coords[j].x - coords[m].x));
-			}
-		}
-		gradients[m] *= -12.0f;
-	}
-	return gradients;
-}
-
-lbfgsfloatval_t lbfgsGradientCallback
+lbfgsfloatval_t gradientCallback
 (
-	void * instance, 
+	void * instance,
 	const lbfgsfloatval_t *x,
 	lbfgsfloatval_t *g,
 	const int n,
 	const lbfgsfloatval_t step
 )
 {
-	Matrix<lbfgsfloatval_t> * distance = (Matrix<lbfgsfloatval_t>*)instance;
-	//g = getGradientList(g,
+	Molecule<lbfgsfloatval_t> * mol = (Molecule<lbfgsfloatval_t>*)instance;
+	
+	auto cost = mol->updateSystem();
+	
+	auto coords = mol->coords;
+	auto distance = mol->distance;
+	auto gradients = mol->gradients;
+	
+	for(int m = 0; m < n; m++)
+	{
+		gradients[m] = 0.0f;
+		
+		for(int i = 0; i < m - 1;i++)
+		{
+			for(int j = m + 1; j < n; j++)
+			{
+				gradients[m] += 
+				((1.0f / pow(distance->get(i,j),14.0f)) - (1.0f / pow(distance->get(i,j),8.0f))) * 
+				(((coords[i].x-coords[j].x) * (coords[m].y - coords[i].y)) + 
+				 ((coords[i].y-coords[j].y) * (coords[j].x - coords[m].x)));
+			}
+		}
+		gradients[m] *= -12.0f;
+	}
+	
+	mol->printGradients();
+	
+	g = gradients;
+
+	return cost;
 }
 
-int lbfgsfunc
+int progressCallback
 (
-	int n,
-	lbfgsfloatval_t *x,
-	lbfgsfloatval_t *ptrFx,
-	lbfgs_evaluate_t gradientCallback,
-	lbfgs_progress_t progressCallback,
 	void * instance,
-	lbfgs_parameter_t *param
+	const lbfgsfloatval_t *x,
+	const lbfgsfloatval_t *g,
+	const lbfgsfloatval_t fx,
+	const lbfgsfloatval_t xnorm,
+	const lbfgsfloatval_t gnorm,
+	const lbfgsfloatval_t step,
+	int n,
+	int k,
+	int ls
 )
 {
-	return lbfgs(n,x,ptrFx,gradientCallback,progressCallback,instance,param);
+	
 }
 
-lbfgsfloatval_t updateSystem(lbfgsfloatval_t * alphas, lbfgsfloatval_t * real, Point * coords, Matrix<lbfgsfloatval_t> * distance, int n)
-{
-	real = getRealAngleList(alphas,real,n);
-	coords = getSystemCoordinates(real,coords,n);
-	distance = getEulerianDistanceMatrix(coords,distance,n);
-	return getSystemEnergy(coords,distance,n);
-}
-
-bool accept(lbfgsfloatval_t E, lbfgsfloatval_t pE, lbfgsfloatval_t temp)
-{	
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(0,100);
-	auto rand = std::bind(distribution,generator);
-	
-	if (isnan(E))
-		return false;
-	
-	if (E <= pE)
-		return true;
-	
-	lbfgsfloatval_t P = exp((-(E-pE))/(temp*10));
-	+
-	printf("%f, %f, %f, %f\n",E, pE, temp, P);
-	
-	if((P*100) < rand())
-		return true;
-	return false;
-}
-
-lbfgsfloatval_t moloptAnnealingBFGS(lbfgsfloatval_t * alphas, 
-						   lbfgsfloatval_t * gradients, 
-						   lbfgsfloatval_t * real, 
-						   Point * coords,
-						   Matrix<lbfgsfloatval_t> * distance,
-						   int n, 
-						   int tMax
+lbfgsfloatval_t moloptAnnealingBFGS
+(
+	int n, 
+	int niters,
+	temperaturefunc tempfunc,
+	Molecule<lbfgsfloatval_t> ** save
 )
 {
-
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(-180,180);
 	
-	auto randAngle = std::bind(distribution,generator);
-
-	lbfgsfloatval_t E = updateSystem(alphas,real,coords,distance,n),pE,prev;
-
-	lbfgsfloatval_t err = E - optimal[n-2];
+	std::mt19937 gen(time(0));
+	
+	std::uniform_int_distribution<int> dist(-180,180);
+	
+	std::uniform_real_distribution<double> acpt(0.0f,1.0f);
+	
+	auto randAngle = std::bind(dist,gen);
+	auto accept = std::bind(acpt,gen);
+	
+	lbfgs_parameter_t param;
+	lbfgs_parameter_init(&param);
+	
+	Molecule<lbfgsfloatval_t> * mol = new Molecule<lbfgsfloatval_t>(n);
 	
 	int k = 0;
 	
-	for(int t = 0; t < tMax; t++)
+	int nAccepted=0,nRejected=0;
+	
+	lbfgsfloatval_t E,pE,prev;
+	
+	for(int i = 0;i < niters;i++)
 	{
-		
-		lbfgsfloatval_t temp = (lbfgsfloatval_t)t/(lbfgsfloatval_t)tMax;
-		
-		printf("%i, %f\n",t,temp);
-		
 		k++;
 		
-		for(int j = 0; j < k; j++)
+		auto T = tempfunc((double)niters/(double)i);
+		
+		//printf("%f\n",T);
+
+		for(int j = 0;j < k;j++)
 		{
-			
-			printf("%i, %i\n",j,k);
-			
-			for(int i = 1;i < n; i++)
+			for(int a = 2; a < n; a++)
 			{
+				pE = mol->updateSystem();
 				
-				printf("%i\n",i);
+				double tv = mol->alphas[i];
+				mol->alphas[i] = (double)(DEG2RAD * randAngle());
+
+				E = mol->updateSystem();
 				
+				// Annealing Algorithm
 				
-				pE = E;
-				
-				
-				
-				prev = alphas[i];
-				alphas[i]+=(DEG2RAD*randAngle());
-				E = updateSystem(alphas,real,coords,distance,n);
-				
-				if accept(E,pE,temp)
+				if(E > pE)
 				{
+					auto delta = E - pE;
 					
+					if(accept() < exp(-delta/T))
+					{
+						// accept
+						nAccepted++;
+					}
+					else
+					{
+						mol->alphas[i] = tv;
+						nRejected++;
+					}
 				}
 				else
 				{
-					
+					// accept
+					//nAccepted++;
 				}
-				
 			}
 		}
 	}
-
-	return E;
+	
+	printf("Accepted: %i\nRejected: %i\n",nAccepted,nRejected);
+	
+	//printf("%f\n",mol->updateSystem());
+	
+	//lbfgs(mol->n,mol->alphas,mol->alphas,gradientCallback,progressCallback,mol,&param);
+	
+	*save = mol;
+	
+	return mol->updateSystem();
 }
 
-lbfgsfloatval_t moloptGeneticBFGS(lbfgsfloatval_t * alphas, 
-						   lbfgsfloatval_t * gradients, 
-						   lbfgsfloatval_t * real, 
-						   Point * coords,
-						   Matrix<lbfgsfloatval_t> * distance,
-						   int n,
-						   int populationSiz,
-						   int keepSiz
+lbfgsfloatval_t moloptGeneticBFGS
+(
+	int n
 )
 {
-	lbfgsfloatval_t ** gAlphas = (lbfgsfloatval_t**)malloc(sizeof(*gAlphas)*populationSiz);
-	lbfgsfloatval_t ** gGradients = (lbfgsfloatval_t**)malloc(sizeof(*gGradients)*populationSiz);
-	lbfgsfloatval_t ** gReal = (lbfgsfloatval_t**)malloc(sizeof(*gReal)*populationSiz);
-	Point ** gCoords = (Point**)malloc(sizeof(*gCoords)*populationSiz);
 	
-	Matrix<lbfgsfloatval_t> ** gDistance = (Matrix<lbfgsfloatval_t>**)malloc(sizeof(*gDistance)*populationSiz);
-	
-	gAlphas[0]=alphas;
-	gGradients[0]=gradients;
-	gReal[0]=real;
-	gCoords[0]=coords;
-	gDistance[0]=distance;
-	
-	lbfgsfloatval_t pE = getSystemEnergy(coords,distance,n);
-	
-	return pE;
 }
 
-*/
+double tempfunc(double x)
+{
+	return x * 0.001;
+}
 
 int main(int argc, char ** argv, char ** envp)
 {
+	#if     defined(USE_SSE) && defined(__SSE2__) && LBFGS_FLOAT == 64
+		//printf("Use SSE2 optimization for 64bit double precision.\n");
+		
+	#elif   defined(USE_SSE) && defined(__SSE__) && LBFGS_FLOAT == 32
+		//printf("Use SSE optimization for 32bit float precision.\n");
+		
+	#else
+		//printf("No CPU specific optimization. \n");
+	
+	#endif
+	
 	int n=0;
 	
 	if (argc > 1)
@@ -193,18 +189,35 @@ int main(int argc, char ** argv, char ** envp)
 	if(!n)
 		return 0;
 	
-	Molecule<lbfgsfloatval_t> * solution = new Molecule<lbfgsfloatval_t>(n);
+	Molecule<lbfgsfloatval_t> * mol;
+	
+	//printf("%i\n",n);
+	
+	int nIters = 50;
+	
+	clock_t begin,end;
+	
+	begin = clock();
+	
+	lbfgsfloatval_t optcost = moloptAnnealingBFGS(n,nIters,tempfunc,&mol);
+
+	end = clock();	
 	
 	std::ofstream fs;
 	fs.open("alphas.txt");
+	
 	for(int i=0;i<n;i++)
 	{
-		//fs << coords[i].x << "," << coords[i].y << "\n";
+		fs << mol->coords[i].x << "," << mol->coords[i].y << "\n";
 	}
 	fs.close();
+	double err = fabs((optimal[n-2]-optcost)/optimal[n-2])*100;
+	double time = (double)(end - begin)/CLOCKS_PER_SEC;
 	
-	//printf("%f\n",optcost);
 	
+	
+	printf("Atoms\tOptimal\tFound\tError\tGen\tTime\n");
+	printf("%i\t%2.2f\t%2.2f\t%2.2f\t%i\t%2.2f\n",n,optimal[n-2],optcost,err,nIters,time);
 	return 0;
 }
 

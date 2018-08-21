@@ -6,6 +6,7 @@
 #ifndef I_NfAv5xV18d4u1Tj758VJpX4i18fsL
 #define I_NfAv5xV18d4u1Tj758VJpX4i18fsL
 
+#include <string>
 #include <random>
 #include <fstream>
 #include <iostream>

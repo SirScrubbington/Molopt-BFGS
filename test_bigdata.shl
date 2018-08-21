@@ -1,0 +1,12 @@
+touch img/t.png
+rm img/*.png
+rm results.txt
+
+for j in {2..100}
+do
+  echo $j
+  for i in {2..61}
+  do
+    ./molopt $i >> log.txt
+  done
+done

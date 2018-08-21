@@ -214,9 +214,14 @@ lbfgsfloatval_t moloptAnnealingBFGS
 	
 	//printf("%f\n",mol->updateSystem());
 	
-	lbfgsfloatval_t * bfgsval = (lbfgsfloatval_t*)malloc(sizeof(lbfgsfloatval_t)*n);
+	//lbfgsfloatval_t * bfgsval = (lbfgsfloatval_t*)malloc(sizeof(lbfgsfloatval_t)*n);
 	
-	lbfgs(mol->n,mol->alphas,bfgsval,gradientCallback,progressCallback,mol,&param);
+	//bfgs(mol->n,mol->alphas,bfgsval,gradientCallback,progressCallback,mol,&param);
+	
+	//for(int i=0;i<n;i++)
+	//{
+	//	printf("%f, %f\n",mol->alphas[i],bfgsval[i]);
+	//}
 	
 	*save = mol;
 	
@@ -274,7 +279,7 @@ int main(int argc, char ** argv, char ** envp)
 	end = clock();	
 	
 	std::ofstream fs;
-	fs.open("alphas.txt");
+	fs.open("alphas.txt",std::fstream::out);
 	
 	for(int i=0;i<n;i++)
 	{
@@ -283,8 +288,34 @@ int main(int argc, char ** argv, char ** envp)
 	fs.close();
 	double err = fabs((optimal[n-2]-optcost)/optimal[n-2])*100;
 	double time = (double)(end - begin)/CLOCKS_PER_SEC;
+
+	std::string datafile = "data/";
+	datafile.append(argv[1]);
+	datafile.append(".csv");
 	
+	printf("%s\n",datafile.c_str());
 	
+	fs.open(datafile,std::fstream::app);
+	
+	if(fs)
+	{
+		fs << n << ",";
+		
+		for (int i=0;i<n;i++)
+		{
+			
+			fs << mol->alphas[i];
+			
+			if(i<n-1)
+			{
+				fs << ",";
+			}
+			else
+			{
+				fs << "," << optcost << "\n";
+			}
+		}
+	}
 	
 	printf("Atoms\tOptimal\tFound\tError\tGen\tTime\n");
 	printf("%i\t%2.2f\t%2.2f\t%2.2f\t%i\t%2.2f\n",n,optimal[n-2],optcost,err,nIters,time);

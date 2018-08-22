@@ -8,8 +8,6 @@
 
 #include "molopt.h"
 
-typedef double(*temperaturefunc)(double x);
-
 lbfgsfloatval_t gradientCallback
 (
 	void * instance,
@@ -72,15 +70,12 @@ lbfgsfloatval_t moloptAnnealingBFGS
 (
 	int n, 
 	int niters,
-	temperaturefunc tempfunc,
+	temperatureFunc tempfunc,
 	Molecule<lbfgsfloatval_t> ** save
 )
 {
-	
-	std::mt19937 gen(time(0));
-	
+	std::mt19937 gen(time(0));	
 	std::uniform_int_distribution<int> dist(-180,180);
-	
 	std::uniform_real_distribution<double> acpt(0.0f,1.0f);
 	
 	auto randAngle = std::bind(dist,gen);
@@ -153,29 +148,146 @@ lbfgsfloatval_t moloptAnnealingBFGS
 	return mol->updateSystem();
 }
 
-lbfgsfloatval_t moloptGeneticBFGS
-(
-	int n
-)
+void crossFunc(void * a, void * b, int n)
 {
 	
+	lbfgsfloatval_t temp;
+	
+	Molecule<lbfgsfloatval_t> * molA = (Molecule<lbfgsfloatval_t> *)a;
+	Molecule<lbfgsfloatval_t> * molB = (Molecule<lbfgsfloatval_t> *)b;
+	
+	if (molA->n < n)
+		return;
+	
+	for(int i = 0; i < n; i++)
+	{
+		
+		//printf("%i: A: %f, B: %f ->",i,molA->alphas[i],molB->alphas[i]);
+		
+		temp = molA->alphas[i];
+		molA->alphas[i] = molB->alphas[i];
+		molB->alphas[i] = temp;
+		
+		//printf("A: %f, B: %f\n",i,molA->alphas[i],molB->alphas[i]);
+		
+	}
 }
 
+void mutFunc(void * arg, int n,randFunc rng)
+{
+	Molecule<lbfgsfloatval_t> * mol = (Molecule<lbfgsfloatval_t> *)arg;
+	
+	for(int i=0;i<n;i++)
+	{
+		mol->alphas[rng()] = 0;
+	}
+}
+
+int sortFunc(void * a, void * b)
+{
+	Molecule<lbfgsfloatval_t> * molA = (Molecule<lbfgsfloatval_t> *)a;
+	Molecule<lbfgsfloatval_t> * molB = (Molecule<lbfgsfloatval_t> *)b;
+	
+	lbfgsfloatval_t ca = molA->updateSystem();
+	lbfgsfloatval_t cb = molB->updateSystem();
+	
+	return ca > cb;
+}
+/*
+lbfgsfloatval_t moloptGeneticBFGS
+(
+	int n,
+	int popSiz,
+	int swapSiz,
+	int generations,
+	int keep,
+	double mutRate,
+	mutationFunc mutFunc,
+	crossoverFunc crossFunc,
+	sortingFunc sortFunc,
+	randFunc rng,
+	Molecule<lbfgsfloatval_t> ** save
+)
+{
+	if (keep % 2 != 0)
+		keep+=1;
+	
+	std::vector<Molecule<lbfgsfloatval_t>*> population(popSiz);
+	
+	//printf("niiiice no crash yet\n");
+	
+	for(int i = 0 ; i < popSiz ; i++)
+	{
+		population[i] = new Molecule<lbfgsfloatval_t>(n);
+	}
+	
+	//printf("niiiice no crash yet 2\n");
+	
+	for(int i = 0 ; i < popSiz ; i++)
+	{
+		population[i]->random(NO_CROSSOVERS,180,gen);
+	}
+	
+	for(int j = 0; j < popSiz; j++)
+	{
+		printf("%f\n",population[j]->updateSystem());
+	}
+	
+	//printf("niiiice no crash yet 3\n");
+	
+	for(int i = 0; i < generations; i++)
+	{
+		std::sort(population.begin(),population.end(),sortFunc);
+		
+		//for(int j = 0; j < popSiz; j++)
+		//{
+		//	printf("%f\n",population[j]->updateSystem());
+		//}
+		
+		//break;
+		
+		for(int j = 0; j < (keep / 2); j++)
+		{
+			crossFunc(population[j],population[keep-j-1],swapSiz); 
+		}
+		
+		for(int j = keep; j < popSiz; j++)
+		{
+			//printf("(%i)\n",j);
+			//population[j]->random(NO_CROSSOVERS,180);
+		}
+	}
+	
+	for(int i=1;i<popSiz;i++)
+		delete population[i];
+	
+	*save = population[0];
+	
+	return population[0]->updateSystem();
+}
+
+*/
+	
 double tempfunc(double x)
 {
 	return x * 0.001;
 }
 
+int rngFunc(std::mt19937 gen, int min, int max)
+{
+	return (gen() % max) + min;
+}
+
 int main(int argc, char ** argv, char ** envp)
 {
 	#if     defined(USE_SSE) && defined(__SSE2__) && LBFGS_FLOAT == 64
-		//printf("Use SSE2 optimization for 64bit double precision.\n");
+		printf("Use SSE2 optimization for 64bit double precision.\n");
 		
 	#elif   defined(USE_SSE) && defined(__SSE__) && LBFGS_FLOAT == 32
-		//printf("Use SSE optimization for 32bit float precision.\n");
+		printf("Use SSE optimization for 32bit float precision.\n");
 		
 	#else
-		//printf("No CPU specific optimization. \n");
+		printf("No CPU specific optimization. \n");
 	
 	#endif
 	
@@ -199,9 +311,17 @@ int main(int argc, char ** argv, char ** envp)
 	
 	begin = clock();
 	
+	std::mt19937 gen(time(0));
+	
+	std::uniform_int_distribution<int> dist(-180,180);
+	
+	//auto rng = std::bind(gen,dist);
+	
 	lbfgsfloatval_t optcost = moloptAnnealingBFGS(n,nIters,tempfunc,&mol);
-
-	end = clock();	
+		
+	//lbfgsfloatval_t optcost = moloptGeneticBFGS(n,100,n/2,50,50,0.50f,mutFunc,crossFunc,sortFunc,rng,&mol);
+	
+	end = clock();
 	
 	std::ofstream fs;
 	fs.open("alphas.txt");
@@ -210,14 +330,15 @@ int main(int argc, char ** argv, char ** envp)
 	{
 		fs << mol->coords[i].x << "," << mol->coords[i].y << "\n";
 	}
+	
 	fs.close();
+	
 	double err = fabs((optimal[n-2]-optcost)/optimal[n-2])*100;
 	double time = (double)(end - begin)/CLOCKS_PER_SEC;
 	
-	
-	
 	printf("Atoms\tOptimal\tFound\tError\tGen\tTime\n");
 	printf("%i\t%2.2f\t%2.2f\t%2.2f\t%i\t%2.2f\n",n,optimal[n-2],optcost,err,nIters,time);
+	
 	return 0;
 }
 

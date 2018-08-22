@@ -6,9 +6,11 @@
 #ifndef I_NfAv5xV18d4u1Tj758VJpX4i18fsL
 #define I_NfAv5xV18d4u1Tj758VJpX4i18fsL
 
+#include <vector>
 #include <random>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <functional>
 
 #include <ctime>
@@ -22,6 +24,7 @@
 
 #include "bfgs/lbfgs.c"
 
+#include "nnet.h"
 #include "Point.h"
 #include "Matrix.h"
 #include "Molecule.h"
@@ -33,6 +36,12 @@
 #ifndef RAD2DEG
 	#define RAD2DEG (180.0f/M_PI)
 #endif // RAD2DEG
+
+typedef double(*temperatureFunc)(double x);
+typedef void (*mutationFunc)(void * arg, int n, std::mt19937 gen);
+typedef void (*crossoverFunc)(void * a, void * b, int n);
+typedef int (*sortingFunc)(void * a, void * b);
+typedef int (*randFunc)(void);
 
 const lbfgsfloatval_t tolerance = pow(10,-6);
 

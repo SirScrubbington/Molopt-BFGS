@@ -9,6 +9,9 @@
 #include "Matrix.h"
 #include "Point.h"
 
+#define NO_CROSSOVERS 0
+#define ALLOW_CROSSOVERS 1
+
 #define _USE_MATH_DEFINES
 
 #include <cmath>
@@ -194,22 +197,56 @@ public:
 		
 		Point * a, * b;
 		
-		for(int i = 0;i < n;i++)
+		for(int i = 0;i < n-1;i++)
 		{
-			for(int j = 0; j < n; j++)
+			for(int j = 0; j < n-1; j++)
 			{
 				if(checkCrossover(i,j))
 				{
-					return {i,j};
+					return {(double)i,(double)j};
 				}
 			}
 		}
+		return {-1.0f,-1.0f};
 	}
 	
 	// Check if crossover exists at index
 	bool checkCrossover(int a, int b)
 	{
+		Point p1, p2, q1, q2;
 		
+		p1 = coords[a];
+		p2 = coords[a+1];
+		
+		q1 = coords[b];
+		q2 = coords[b+1];
+		
+		return (
+			((q1.x-p1.x)*(p2.y-p1.y) - (q1.y-p1.y)*(p2.x-p1.x))
+				* ((q2.x-p1.x)*(p2.y-p1.y) - (q2.y-p1.y)*(p2.x-p1.x)) < 0)
+				&&
+			(((p1.x-q1.x)*(q2.y-q1.y) - (p1.y-q1.y)*(q2.x-q1.x))
+				* ((p2.x-q1.x)*(q2.y-q1.y) - (p2.y-q1.y)*(q2.x-q1.x)) < 0);
+		
+	}
+	
+	void random(int allowCrossovers, int range, std::mt19937 gen)
+	{	
+	
+		std::uniform_int_distribution<int> dist(-range,range);
+		auto randAngle = std::bind(dist,gen);
+	
+		for(int i = 1; i < n - 1; i++)
+		{
+			alphas[i] = randAngle();
+		}
+		
+		Point cross = hasCrossovers();
+		
+		if(cross.x != -1 && cross.y != -1)
+			random(allowCrossovers,range, gen);
+		else
+			updateSystem();
 	}
 	
 	Molecule(const Molecule<moltyp> &cpy)

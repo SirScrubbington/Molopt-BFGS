@@ -12,6 +12,9 @@ CXX = g++
 #Compiler Directions
 CXXFLAGS=-g
 
+#Include Directories
+INCLUDE=-Iinclude
+
 #Source Files
 SOURCE = $(wildcard *.cpp)
 

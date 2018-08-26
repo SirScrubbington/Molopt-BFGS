@@ -17,29 +17,38 @@
 #include <cmath>
 
 #ifndef DEG2RAD
-	#define DEG2RAD (M_PI/180.0f)
+	#define DEG2RAD
+	const double D2R = (M_PI/180.0f);
 #endif // DEG2RAD
 
 #ifndef RAD2DEG
-	#define RAD2DEG (180.0f/M_PI)
+	#define RAD2DEG
+	const double R2D = (180.0f/M_PI);
 #endif // RAD2DEG
 
 #include <cstdio>
 
-template<typename moltyp> 
+#include "include/Eigen/Core"
+#include "include/LBFGS.h"
+
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+
+using namespace LBFGSpp;
 
 class Molecule
 {
 private:
 public:
 	// Data Structures
-	Matrix<moltyp> * distance;
 	
-	moltyp * alphas;
-	moltyp * real;
-	moltyp * gradients; 
+	Matrix<double> * distance;
+		
+	VectorXd * alphas;
+	VectorXd * real;
+	VectorXd * gradients;
 	
-	Point * coords;
+	std::vector<Point> * coords;
 	
 	int n;
 	
@@ -85,7 +94,7 @@ public:
 		}
 	}
 	
-	moltyp * getRealAngleList()
+	 * getRealAngleList()
 	{
 		real[0] = alphas[0];
 		
@@ -114,12 +123,12 @@ public:
 		return coords;
 	}
 
-	moltyp getR(moltyp x, moltyp y)
+	double getR(double x, double y)
 	{
 		return sqrt(pow(x,2) + pow(y,2));
 	}
 
-	Matrix<moltyp> * getEulerianDistanceMatrix()
+	Matrix<double> * getEulerianDistanceMatrix()
 	{
 		for(int i=0;i<n;i++)
 		{
@@ -139,9 +148,9 @@ public:
 		return distance;
 	}
 
-	moltyp getSystemEnergy()
+	double getSystemEnergy()
 	{
-		moltyp V = 0;
+		double V = 0;
 		
 		for(int j=0;j<n;j++)
 			for(int i=0;i<j;i++)
@@ -158,11 +167,11 @@ public:
 		
 		this->n = n;
 		
-		distance = new Matrix<moltyp>(n,n);
+		distance = new Matrix<double>(n,n);
 		
-		alphas = (moltyp*)malloc(sizeof(*alphas)*n);
-		real = (moltyp*)malloc(sizeof(*real)*n);
-		gradients = (moltyp*)malloc(sizeof(*gradients)*n); 
+		alphas = (double*)malloc(sizeof(*alphas)*n);
+		real = (double*)malloc(sizeof(*real)*n);
+		gradients = (double*)malloc(sizeof(*gradients)*n); 
 		
 		coords = (Point*)malloc(sizeof(*coords)*n);
 		
@@ -183,7 +192,7 @@ public:
 		
 	}
 	
-	moltyp updateSystem()
+	double updateSystem()
 	{
 		real = getRealAngleList();
 		coords = getSystemCoordinates();
@@ -230,35 +239,16 @@ public:
 		
 	}
 	
-	void random(int allowCrossovers, int range, std::mt19937 gen)
-	{	
-	
-		std::uniform_int_distribution<int> dist(-range,range);
-		auto randAngle = std::bind(dist,gen);
-	
-		for(int i = 1; i < n - 1; i++)
-		{
-			alphas[i] = randAngle();
-		}
-		
-		Point cross = hasCrossovers();
-		
-		if(cross.x != -1 && cross.y != -1)
-			random(allowCrossovers,range, gen);
-		else
-			updateSystem();
-	}
-	
-	Molecule(const Molecule<moltyp> &cpy)
+	Molecule(const Molecule<double> &cpy)
 	{
 		
 		n = cpy.n;
 		
-		distance = new Matrix<moltyp>(n,n);
+		distance = new Matrix<double>(n,n);
 		
-		alphas = (moltyp*)malloc(sizeof(*alphas)*n);
-		real = (moltyp*)malloc(sizeof(*real)*n);
-		gradients = (moltyp*)malloc(sizeof(*gradients)*n); 
+		alphas = (double*)malloc(sizeof(*alphas)*n);
+		real = (double*)malloc(sizeof(*real)*n);
+		gradients = (double*)malloc(sizeof(*gradients)*n); 
 		
 		coords = (Point*)malloc(sizeof(*coords)*n);
 		

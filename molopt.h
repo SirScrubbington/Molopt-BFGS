@@ -22,30 +22,28 @@
 
 #include <cmath>
 
-#include "bfgs/lbfgs.c"
+#include "include/Eigen/Core"
+#include "include/LBFGS.h"
 
-#include "nnet.h"
 #include "Point.h"
 #include "Matrix.h"
 #include "Molecule.h"
 
 #ifndef DEG2RAD
-	#define DEG2RAD (M_PI/180.0f)
+	#define DEG2RAD
+	const double D2R = (M_PI/180.0f);
 #endif // DEG2RAD
 
 #ifndef RAD2DEG
-	#define RAD2DEG (180.0f/M_PI)
+	#define RAD2DEG
+	const double R2D = (180.0f/M_PI);
 #endif // RAD2DEG
 
 typedef double(*temperatureFunc)(double x);
-typedef void (*mutationFunc)(void * arg, int n, std::mt19937 gen);
-typedef void (*crossoverFunc)(void * a, void * b, int n);
-typedef int (*sortingFunc)(void * a, void * b);
-typedef int (*randFunc)(void);
 
-const lbfgsfloatval_t tolerance = pow(10,-6);
+const double tolerance = pow(10,-6);
 
-const lbfgsfloatval_t optimal[] = {
+const double optimal[] = {
 	-1.0f,
 	-3.0f,
 	-5.1f,

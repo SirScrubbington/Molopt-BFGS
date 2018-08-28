@@ -1,0 +1,174 @@
+data/2.csv
+Atoms	Optimal	Found	Error	Gen	Time
+2	-1.00	-1.00	0.00	50	0.00
+data/3.csv
+Atoms	Optimal	Found	Error	Gen	Time
+3	-3.00	-2.95	1.80	50	0.00
+data/4.csv
+Atoms	Optimal	Found	Error	Gen	Time
+4	-5.10	-5.07	0.54	50	0.00
+data/5.csv
+Atoms	Optimal	Found	Error	Gen	Time
+5	-7.20	-7.08	1.68	50	0.01
+data/6.csv
+Atoms	Optimal	Found	Error	Gen	Time
+6	-9.30	-9.33	0.36	50	0.03
+data/7.csv
+Atoms	Optimal	Found	Error	Gen	Time
+7	-12.50	-12.49	0.11	50	0.08
+data/8.csv
+Atoms	Optimal	Found	Error	Gen	Time
+8	-14.70	-14.67	0.22	50	0.14
+data/9.csv
+Atoms	Optimal	Found	Error	Gen	Time
+9	-16.90	-15.80	6.49	50	0.23
+data/10.csv
+Atoms	Optimal	Found	Error	Gen	Time
+10	-20.10	-20.03	0.36	50	0.36
+data/11.csv
+Atoms	Optimal	Found	Error	Gen	Time
+11	-22.30	-22.24	0.29	50	0.53
+data/12.csv
+Atoms	Optimal	Found	Error	Gen	Time
+12	-25.50	-25.42	0.33	50	0.78
+data/13.csv
+Atoms	Optimal	Found	Error	Gen	Time
+13	-27.80	-27.19	2.18	50	1.09
+data/14.csv
+Atoms	Optimal	Found	Error	Gen	Time
+14	-31.00	-27.11	12.56	50	1.53
+data/15.csv
+Atoms	Optimal	Found	Error	Gen	Time
+15	-33.20	-32.34	2.60	50	2.05
+data/16.csv
+Atoms	Optimal	Found	Error	Gen	Time
+16	-36.50	-36.33	0.46	50	2.58
+data/17.csv
+Atoms	Optimal	Found	Error	Gen	Time
+17	-38.70	-38.37	0.84	50	3.36
+data/18.csv
+Atoms	Optimal	Found	Error	Gen	Time
+18	-42.00	-41.54	1.10	50	4.30
+data/19.csv
+Atoms	Optimal	Found	Error	Gen	Time
+19	-45.30	-43.76	3.40	50	5.56
+data/20.csv
+Atoms	Optimal	Found	Error	Gen	Time
+20	-47.50	-45.50	4.21	50	6.95
+data/21.csv
+Atoms	Optimal	Found	Error	Gen	Time
+21	-50.80	-49.71	2.14	50	8.52
+data/22.csv
+Atoms	Optimal	Found	Error	Gen	Time
+22	-53.00	-50.41	4.88	50	10.33
+data/23.csv
+Atoms	Optimal	Found	Error	Gen	Time
+23	-56.30	-56.07	0.40	50	12.11
+data/24.csv
+Atoms	Optimal	Found	Error	Gen	Time
+24	-59.60	-51.79	13.10	50	15.11
+data/25.csv
+Atoms	Optimal	Found	Error	Gen	Time
+25	-61.80	-54.76	11.39	50	17.88
+data/26.csv
+Atoms	Optimal	Found	Error	Gen	Time
+26	-65.10	-62.44	4.09	50	21.08
+data/27.csv
+Atoms	Optimal	Found	Error	Gen	Time
+27	-68.40	-63.95	6.50	50	24.62
+data/28.csv
+Atoms	Optimal	Found	Error	Gen	Time
+28	-70.00	-70.04	0.05	50	28.05
+data/29.csv
+Atoms	Optimal	Found	Error	Gen	Time
+29	-74.00	-72.88	1.51	50	32.28
+data/30.csv
+Atoms	Optimal	Found	Error	Gen	Time
+30	-77.20	-76.17	1.33	50	37.23
+data/31.csv
+Atoms	Optimal	Found	Error	Gen	Time
+31	-79.50	-75.58	4.93	50	43.11
+data/32.csv
+Atoms	Optimal	Found	Error	Gen	Time
+32	-82.80	-77.88	5.94	50	49.41
+data/33.csv
+Atoms	Optimal	Found	Error	Gen	Time
+33	-86.10	-83.17	3.41	50	55.94
+data/34.csv
+Atoms	Optimal	Found	Error	Gen	Time
+34	-88.30	-78.56	11.03	50	63.64
+data/35.csv
+Atoms	Optimal	Found	Error	Gen	Time
+35	-91.70	-84.24	8.14	50	71.89
+data/36.csv
+Atoms	Optimal	Found	Error	Gen	Time
+36	-95.00	-90.33	4.92	50	80.02
+data/37.csv
+Atoms	Optimal	Found	Error	Gen	Time
+37	-98.30	-88.48	9.99	50	90.02
+data/38.csv
+Atoms	Optimal	Found	Error	Gen	Time
+38	-100.50	-98.61	1.88	50	99.80
+data/39.csv
+Atoms	Optimal	Found	Error	Gen	Time
+39	-103.80	-nan	nan	50	114.64
+data/40.csv
+Atoms	Optimal	Found	Error	Gen	Time
+40	-107.10	-nan	nan	50	130.97
+data/41.csv
+Atoms	Optimal	Found	Error	Gen	Time
+41	-109.40	-101.35	7.36	50	136.31
+data/42.csv
+Atoms	Optimal	Found	Error	Gen	Time
+42	-112.70	-109.17	3.13	50	150.41
+data/43.csv
+Atoms	Optimal	Found	Error	Gen	Time
+43	-116.00	-113.68	2.00	50	164.89
+data/44.csv
+Atoms	Optimal	Found	Error	Gen	Time
+44	-119.30	-110.42	7.44	50	183.95
+data/45.csv
+Atoms	Optimal	Found	Error	Gen	Time
+45	-121.60	-86.91	28.53	50	202.98
+data/46.csv
+Atoms	Optimal	Found	Error	Gen	Time
+46	-124.90	-114.48	8.34	50	215.76
+data/47.csv
+Atoms	Optimal	Found	Error	Gen	Time
+47	-128.60	-107.73	16.23	50	236.12
+data/48.csv
+Atoms	Optimal	Found	Error	Gen	Time
+48	-131.50	-122.65	6.73	50	258.80
+data/49.csv
+Atoms	Optimal	Found	Error	Gen	Time
+49	-133.80	-122.06	8.77	50	278.61
+data/50.csv
+Atoms	Optimal	Found	Error	Gen	Time
+50	-137.10	-126.47	7.76	50	315.86
+data/51.csv
+Atoms	Optimal	Found	Error	Gen	Time
+51	-140.50	-135.03	3.89	50	344.61
+data/52.csv
+Atoms	Optimal	Found	Error	Gen	Time
+52	-143.70	-nan	nan	50	374.00
+data/53.csv
+Atoms	Optimal	Found	Error	Gen	Time
+53	-146.00	-128.70	11.85	50	396.81
+data/54.csv
+Atoms	Optimal	Found	Error	Gen	Time
+54	-149.30	-135.36	9.34	50	444.76
+data/55.csv
+Atoms	Optimal	Found	Error	Gen	Time
+55	-152.70	-138.31	9.42	50	476.11
+data/56.csv
+Atoms	Optimal	Found	Error	Gen	Time
+56	-154.70	-140.02	9.49	50	513.33
+data/57.csv
+Atoms	Optimal	Found	Error	Gen	Time
+57	-157.40	-148.32	5.77	50	546.31
+data/58.csv
+Atoms	Optimal	Found	Error	Gen	Time
+58	-160.20	-144.57	9.76	50	591.67
+data/59.csv
+Atoms	Optimal	Found	Error	Gen	Time
+59	-163.00	-nan	nan	50	633.75

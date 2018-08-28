@@ -2,9 +2,13 @@ touch img/t.png
 rm img/*.png
 rm results.txt
 
-for i in {2..61}
+for j in {1..100}
 do
-  ./molopt.exe $i
-  python graph.py
-  rm alphas.txt
+  for i in {2..61}
+  do
+    echo $j,$i
+    ./molopt.exe $i >> log_$j.txt
+    python graph.py
+    rm alphas.txt
+  done
 done

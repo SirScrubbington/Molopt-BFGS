@@ -10,84 +10,228 @@
 
 typedef double(*temperaturefunc)(double x);
 
+std::mt19937 * gen;
+
+double randAngle()
+{
+	return DEG2RAD * (((*gen)() % 180) - 180);
+}
+
+double accept()
+{
+	return (double)(((*gen)()%100)/100.0f);
+}
+
 double tempfunc(double x)
 {
 	return x * 0.001;
 }
 
-double moloptAnnealingBFGS
+double BeginOrientatedAnnealing
 (
 	int n, 
-	int nIters,
-	temperaturefunc tempfunc,
-	Molecule ** save
+	int iters,
+	temperaturefunc temp,
+	Molecule ** molecule
 )
 {
-	
-	std::mt19937 gen(time(0));
-	
-	std::uniform_int_distribution<int> dist(-180,180);
-	
-	std::uniform_real_distribution<double> acpt(0.0f,1.0f);
-	
-	auto randAngle = std::bind(dist,gen);
-	auto accept = std::bind(acpt,gen);
-	
-	lbfgs_parameter_t param;
-	lbfgs_parameter_init(&param);
-	
-	Molecule * mol = new Molecule(n);
-	
-	int k = 0;
-	
-	int nAccepted=0,nRejected=0;
-	
-	double E,pE,prev;
-	
-	for(int i = 0;i < n;i++)
+	if (*molecule == NULL)
 	{
-		k++;
-		
-		auto T = tempfunc((double)n/(double)i);
+		*molecule = new Molecule(n);
+	}
+	
+	Molecule * mol = *molecule;
 
-		for(int j = 0;j < nIters;j++)
+	double T,E,pE,prev;
+	
+	int k;
+	
+	for(int i = 0; i < n; i++)
+	{
+		k = 1;
+		
+		for(int j = 0; j < iters; j++)
 		{
-			for(int a = 1; a < n; a++)
+			T = temp((double)iters/(double)j);
+			
+			for(int a = 1; a < k; a++)
 			{
-				//printf("%i %i %i\n",i,j,a);
 				pE = mol->updateSystem();
 				
 				double tv = mol->alphas[i];
+				
 				mol->alphas[i] = (double)(DEG2RAD * randAngle());
 
 				E = mol->updateSystem();
 
 				if(E > pE)
 				{
-					auto delta = E - pE;
+					double delta = (E - pE);
 					
-					if(accept() < exp(-delta/T))
+					if(E < 0.0f && (accept() < exp(-delta/T)))
 					{
-						nAccepted++;
+						//
 					}
 					else
 					{
 						mol->alphas[i] = tv;
-						nRejected++;
 					}
 				}
 			}
+			
+			k++;
+			
 		}
 	}
-	
-	//printf("Accepted: %i\nRejected: %i\n",nAccepted,nRejected);
-
-	*save = mol;
 	
 	return mol->updateSystem();
 }
 
-int main(int argc, char ** argv, char ** envp)
+double IterativeAnnealing
+(
+	int n, 
+	int iters,
+	temperaturefunc temp,
+	Molecule ** molecule
+)
+{
+	if (*molecule == NULL)
+	{
+		*molecule = new Molecule(n);
+	}
+
+	Molecule * mol = *molecule;
+	
+	double E,pE,prev;
+	
+	int k = 1;
+	
+	for(int i = 0; i < iters; i++)
+	{
+		
+		auto T = temp((double)n/(double)i);
+
+		for(int j = 0; j < k; j++)
+		{
+			for(int a = 1; a < n; a++)
+			{
+				pE = mol->updateSystem();
+				
+				double tv = mol->alphas[i];
+					
+				mol->alphas[i] = (double)(DEG2RAD * randAngle());
+
+				E = mol->updateSystem();
+
+				if(E > pE)
+				{
+					double delta = (E - pE);
+						
+					if(E < 0.0f && (accept() < exp(-delta/T)))
+					{
+						//
+					}
+					else
+					{
+						mol->alphas[i] = tv;
+					}
+				}
+			}
+		}
+		k++;
+	}
+	return mol->updateSystem();
+}
+
+std::vector<int> getTraversal(int n)
+{
+	int a = 0, b = n-1;
+	
+	std::vector<int> indexes;
+	
+	while(a < b)
+	{
+		indexes.push_back(a);
+		indexes.push_back(b);
+		a++;
+		b--;
+	}
+	if(a == b)
+	{
+		indexes.push_back(a);
+	}
+	
+	return indexes;
+}
+
+double centreOrientatedAnnealing
+(
+	int n, 
+	int iters,
+	temperaturefunc temp,
+	Molecule ** molecule
+)
+{
+	if (*molecule == NULL)
+	{
+		*molecule = new Molecule(n);
+	}
+
+	Molecule * mol = *molecule;
+	
+	double E,pE,prev;
+	
+	int k = 1, index;
+	
+	auto indexes = getTraversal(n);
+	
+	
+	for(int i = n-1; i >= 0; i--)
+	{
+		index = indexes.at(i);
+		
+		printf("%i\n",index);
+		
+		auto T = temp((double)n/(double)i);
+
+		for(int j = 0; j < k; j++)
+		{
+			for(int a = 1; a < n; a++)
+			{
+				pE = mol->updateSystem();
+				
+				double tv = mol->alphas[index];
+					
+				mol->alphas[index] = (double)(DEG2RAD * randAngle());
+
+				E = mol->updateSystem();
+
+				if(E > pE)
+				{
+					double delta = (E - pE);
+						
+					if(E < 0.0f && (accept() < exp(-delta/T)))
+					{
+						//
+					}
+					else
+					{
+						mol->alphas[index] = tv;
+					}
+				}
+			}
+		}
+		k++;
+	}
+	return mol->updateSystem();
+}
+
+double getTime(clock_t begin, clock_t end)
+{
+	return (double)(end-begin)/(CLOCKS_PER_SEC);
+}
+
+int main(int argc, char ** argv)
 {
 	int n = 0;
 	
@@ -99,60 +243,99 @@ int main(int argc, char ** argv, char ** envp)
 	if(!n)
 		return 0;
 	
-	Molecule * mol;
-
-	int nIters = 50;
+	gen = new std::mt19937(time(0));
 	
 	clock_t begin,end;
 	
+	// Constant testing data
+	
+	const int nIterations = 50; // Number of annealing passes
+	
+	LBFGSParam<double> param; // Default parameters for the LBFGS routine
+	param.max_iterations = 50; // Maximum number of LBFGS iterations
+	
+	Molecule * aLinear,* aRandom,* bLinear,* bRandom,* cLinear,* cRandom;
+	
+	double alTime, arTime, blTime, brTime, clTime, crTime;
+	
+	double alCost, arCost, blCost, brCost, clCost, crCost;
+	
+	// loop over all atoms 'niters' times at once, then progress to next atom
+
+	// linear configuration
+	
 	begin = clock();
 	
-	double optcost = moloptAnnealingBFGS(n,nIters,tempfunc,&mol);
+	aLinear = new Molecule(n);
+	
+	end = clock();
+	
+	alTime = getTime(begin,end);
+	
+	// random configuration
+	
+	begin = clock();
+	
+	aRandom = new Molecule(n);
+	aRandom->random();
+	
+	end = clock();
+	
+	arTime = getTime(begin,end);
+	
+	// loop over each molecules 'niters' times, once for each every iteration
 
-	end = clock();	
+	// linear configuration
 	
-	std::ofstream fs;
-	fs.open("alphas.txt",std::fstream::out);
+	begin = clock();
 	
-	for(int i=0;i<n;i++)
-	{
-		fs << mol->coords[i].x << "," << mol->coords[i].y << "\n";
-	}
-	fs.close();
+	bLinear = new Molecule(n);
 	
-	double err = fabs((optimal[n-2]-optcost)/optimal[n-2])*100;
-	double time = (double)(end - begin)/CLOCKS_PER_SEC;
-
-	std::string datafile = "data/";
-	datafile.append(argv[1]);
-	datafile.append(".csv");
+	end = clock();
 	
-	printf("%s\n",datafile.c_str());
+	blTime = getTime(begin,end);
 	
-	fs.open(datafile,std::fstream::app);
-	
-	if(fs)
-	{
-		fs << n << ",";
+	// random configuration
 		
-		for (int i=0;i<n;i++)
-		{
-			
-			fs << mol->alphas[i];
-			
-			if(i<n-1)
-			{
-				fs << ",";
-			}
-			else
-			{
-				fs << "," << optcost << "\n";
-			}
-		}
-	}
+	begin = clock();
 	
-	printf("Atoms\tOptimal\tFound\tError\tGen\tTime\n");
-	printf("%i\t%2.2f\t%2.2f\t%2.2f\t%i\t%2.2f\n",n,optimal[n-2],optcost,err,nIters,time);
+	bRandom = new Molecule(n);
+	bRandom->random();
+	
+	end = clock();
+	
+	brTime = getTime(begin,end);
+		
+	// loop over each molecule 'niters' times at once, starting at the center and expanding outward
+	// (starting with n/2, -> n/2 + 1, n/2 -1, n/2 + 2, ...  n/2 - n/2, n/2 + n/2
+
+	// linear configuration
+	
+	begin = clock();
+	
+	cLinear = new Molecule(n);
+	
+	clCost = centreOrientatedAnnealing(n,nIterations,tempfunc,&cLinear);
+	
+	end = clock();
+	
+	clTime = getTime(begin,end);
+	
+	// random configuration
+	
+	begin = clock();
+	
+	cRandom = new Molecule(n);
+	cRandom->random();
+	
+	crCost = centreOrientatedAnnealing(n,nIterations,tempfunc,&cRandom);
+	
+	end = clock();
+	
+	crTime = getTime(begin,end);
+	
+	printf("%f, %f\n",clCost,crCost);
+	
 	return 0;
 }
 

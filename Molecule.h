@@ -53,7 +53,23 @@ public:
 	int n;
 	
 	// Member Functions
-
+	void random()
+	{
+		double valid = false;
+		
+		while(!valid)
+		{
+			for(int i = 0; i < n; i++)
+			{
+				alphas[i] = DEG2RAD * ((rand() % 180) - 180);
+			}
+			if (updateSystem() < 0.0f)
+			{
+				valid = true;
+			}
+		}
+	}
+	
 	void getRealAngleList()
 	{
 		real[0] = alphas[0];

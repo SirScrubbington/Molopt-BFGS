@@ -21,7 +21,8 @@
 
 #include <cmath>
 
-#include "bfgs/lbfgs.c"
+#include "include/Eigen/Core"
+#include "include/LBFGS.h"
 
 #include "Point.h"
 #include "Matrix.h"
@@ -35,9 +36,9 @@
 	#define RAD2DEG (180.0f/M_PI)
 #endif // RAD2DEG
 
-const lbfgsfloatval_t tolerance = pow(10,-6);
+const double tolerance = pow(10,-6);
 
-const lbfgsfloatval_t optimal[] = {
+const double optimal[] = {
 	-1.0f,
 	-3.0f,
 	-5.1f,

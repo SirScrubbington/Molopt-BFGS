@@ -28,6 +28,11 @@ double tempfunc(double x)
 	return x * 0.001;
 }
 
+double tempfuncanneal(double x)
+{
+	return x * 20.0f;
+}
+
 double BeginOrientatedAnnealing
 (
 	int n, 
@@ -45,41 +50,35 @@ double BeginOrientatedAnnealing
 
 	double T,E,pE,prev;
 	
-	for(int i = 0; i < n; i++)
+	for(int i = 1; i < n; i++)
 	{
 		T = temp((double)n/(double)i);
 		
 		for(int j = 0; j < iters; j++)
 		{
-			for(int a = 1; a < iters; a++)
-			{
-				pE = mol->updateSystem();
+			pE = mol->updateSystem();
 				
-				double tv = mol->alphas[i];
+			double tv = mol->alphas[i];
 				
-				mol->alphas[i] = randAngle();
+			mol->alphas[i] = randAngle();
 				
-				E = mol->updateSystem();
+			E = mol->updateSystem();
 
-				if(E > pE)
-				{
-					double delta = (E - pE);
+			if(E > pE)
+			{
+				double delta = (E - pE);
 					
-					if(E < 0.0f && (accept() < exp(-delta/T)))
-					{
-						//
-					}
-					else
-					{
-						mol->alphas[i] = tv;
-					}
+				if(E < 0.0f && (accept() < exp(-delta/T)))
+				{
+					//
+				}
+				else
+				{
+					mol->alphas[i] = tv;
 				}
 			}
 		}
 	}
-	
-	////printf("Done begin orientated annealing\n");
-	
 	return mol->updateSystem();
 }
 
@@ -107,120 +106,31 @@ double IterativeAnnealing
 		
 		auto T = temp((double)n/(double)i);
 
-		for(int j = 0; j < iters; j++)
+		for(int a = 1; a < n; a++)
 		{
-			for(int a = 1; a < n; a++)
-			{
-				pE = mol->updateSystem();
+			pE = mol->updateSystem();
+			
+			double tv = mol->alphas[a];
 				
-				double tv = mol->alphas[a];
+			mol->alphas[a] = randAngle();
+
+			E = mol->updateSystem();
+
+			if(E > pE)
+			{
+				double delta = (E - pE);
 					
-				mol->alphas[a] = randAngle();
-
-				E = mol->updateSystem();
-
-				if(E > pE)
+				if(E < 0.0f && (accept() < exp(-delta/T)))
 				{
-					double delta = (E - pE);
-						
-					if(E < 0.0f && (accept() < exp(-delta/T)))
-					{
-						//
-					}
-					else
-					{
-						mol->alphas[a] = tv;
-					}
+					//
+				}
+				else
+				{
+					mol->alphas[a] = tv;
 				}
 			}
 		}
 	}
-	
-	////printf("Done iterative orientated annealing\n");
-	
-	return mol->updateSystem();
-}
-
-std::vector<int> getTraversal(int n)
-{
-	int a = 0, b = n-1;
-	
-	std::vector<int> indexes;
-	
-	while(a < b)
-	{
-		indexes.push_back(a);
-		indexes.push_back(b);
-		a++;
-		b--;
-	}
-	if(a == b)
-	{
-		indexes.push_back(a);
-	}
-	
-	return indexes;
-}
-
-double centreOrientatedAnnealing
-(
-	int n, 
-	int iters,
-	temperaturefunc temp,
-	Molecule ** molecule
-)
-{
-	if (*molecule == NULL)
-	{
-		*molecule = new Molecule(n);
-	}
-
-	Molecule * mol = *molecule;
-	
-	double E,pE,prev;
-	
-	int k = 1, index;
-	
-	auto indexes = getTraversal(n);
-	
-	
-	for(int i = n-1; i >= 0; i--)
-	{
-		index = indexes.at(i);
-		
-		auto T = temp((double)n/(double)i);
-
-		for(int j = 0; j < iters; j++)
-		{
-			for(int a = 1; a < iters; a++)
-			{
-				pE = mol->updateSystem();
-				
-				double tv = mol->alphas[index];
-
-				mol->alphas[index] = randAngle();
-
-				E = mol->updateSystem();
-
-				if(E > pE)
-				{
-					double delta = (E - pE);
-						
-					if(E < 0.0f && (accept() < exp(-delta/T)))
-					{
-						//
-					}
-					else
-					{
-						mol->alphas[index] = tv;
-					}
-				}
-			}
-		}
-	}
-	
-	////printf("Done centre orientated annealing\n");
-	
 	return mol->updateSystem();
 }
 
@@ -236,7 +146,7 @@ int main(int argc, char ** argv)
 	if (argc > 1)
 		n = atoi(argv[1]);
 	else
-		//printf("Usage: ./molopt[.exe/.out] natoms");
+		printf("Usage: ./molopt[.exe/.out] natoms");
 	
 	if(!n)
 		return 0;
@@ -262,34 +172,9 @@ int main(int argc, char ** argv)
 	
 	makeDirectory(writepath.c_str());
 	
-	std::string filenames[] = 
-	{
-		"alData.csv",
-		"arData.csv",
-		"acData.csv",
-		"asData.csv",
-		
-		"blData.csv",
-		"brData.csv",
-		"bcData.csv",
-		"bsData.csv",
-		
-		"clData.csv",
-		"crData.csv",
-		"ccData.csv",
-		"csData.csv"
-	};
+	Molecule circmol(n), squaremol(n);
 	
-	for(int i = 0; i < 6; i++)
-	{
-		filenames[i] = writepath + filenames[i];
-	}
-	
-	Molecule randmol(n), circmol(n), squaremol(n);
-	
-	randmol.random();
-	
-	double circlangle = DEG2RAD * 360.0f / (n+1);
+	double circlangle = DEG2RAD * 360.0f / n;
 	double squarangle = DEG2RAD * 90.0f;
 	
 	for(int i = 0; i < n; i++)
@@ -317,48 +202,43 @@ int main(int argc, char ** argv)
 	begin = clock();
 	
 	molecules[0] = new Molecule(n);
-	
-	costs[0] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[0]);
-	
-	end = clock();
-	
-	times[0] = getTime(begin,end);
-		
-	// random configuration
-	
-	begin = clock();
 
-	molecules[1] = new Molecule(randmol);
-	
-	costs[1] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[1]);
+	//costs[0] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[0]);
 	
 	end = clock();
+
+	times[0] = getTime(begin,end);
 	
-	times[1] = getTime(begin,end);
+	printf("Time 0: %f\n",times[0]);
 
 	// circular configuration
 	
 	begin = clock();
 	
-	molecules[2] = new Molecule(circmol);
+	molecules[1] = new Molecule(circmol);
+	molecules[1]->updateSystem();
 	
-	costs[2] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[2]);
+	//costs[1] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[1]);
 	
 	end = clock();
 	
-	times[2] = getTime(begin,end);
+	times[1] = getTime(begin,end);
+	
+	printf("Time 2: %f\n",times[1]);
 	
 	// square configuration
 	
 	begin = clock();
 
-	molecules[3] = new Molecule(squaremol);
-	
-	costs[3] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[3]);
+	molecules[2] = new Molecule(squaremol);
+	molecules[2]->updateSystem();
+	//costs[2] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[2]);
 	
 	end = clock();
 	
-	times[3] = getTime(begin,end);
+	times[2] = getTime(begin,end);
+	
+	printf("Time 3: %f\n",times[2]);
 	
 	// loop over each molecules 'niters' times, once for each every iteration
 
@@ -366,70 +246,100 @@ int main(int argc, char ** argv)
 	
 	begin = clock();
 	
-	molecules[4] = new Molecule(n);
+	molecules[3] = new Molecule(n);
+	molecules[3]->updateSystem();
 	
-	costs[4] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[4]);
-	
-	end = clock();
-	
-	times[4] = getTime(begin,end);
-		
-	// random configuration
-		
-	begin = clock();
-	
-	molecules[5] = new Molecule(randmol);
-	
-	costs[5] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[5]);
+	//costs[3] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[3]);
 	
 	end = clock();
 	
-	times[5] = getTime(begin,end);
+	times[3] = getTime(begin,end);
+	
+	printf("Time 0: %f\n",times[3]);
 
 	// circular configuration
 	
 	begin = clock();
 	
-	molecules[6] = new Molecule(circmol);
+	molecules[4] = new Molecule(circmol);
+	molecules[4]->updateSystem();
 	
-	costs[6] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[6]);
+	//costs[4] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[4]);
 	
 	end = clock();
 	
-	times[6] = getTime(begin,end);
+	times[4] = getTime(begin,end);
+	
+	printf("Time 0: %f\n",times[4]);
 	
 	// square configuration
 		
 	begin = clock();
 	
-	molecules[7] = new Molecule(squaremol);
+	molecules[5] = new Molecule(squaremol);
+	molecules[5]->updateSystem();
 	
-	costs[7] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[7]);
+	//costs[5] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[5]);
+	
+	end = clock();
+	
+	times[5] = getTime(begin,end);
+	
+	printf("Time 0: %f\n",times[5]);
+	
+	/*
+	
+	-- BFGS METHOD --
+	
+	*/
+	
+	begin = clock();
+	
+	molecules[6] = new Molecule(&(molecules[0]));
+	
+	costs[6]// = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[6]);
+	
+	end = clock();
+	
+	times[6] = getTime(begin,end);
+	
+	printf("Time 6: %f\n",times[6]);
+
+	// circular configuration
+	
+	begin = clock();
+	
+	molecules[7] = new Molecule(&(molecules[1]));
+	
+	costs[7]// = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[7]);
 	
 	end = clock();
 	
 	times[7] = getTime(begin,end);
 	
-	// loop over each molecule 'niters' times at once, starting at the center and expanding outward
-	// (starting with n/2, -> n/2 + 1, n/2 -1, n/2 + 2, ...  n/2 - n/2, n/2 + n/2
-
-	// linear configuration
+	printf("Time 7: %f\n",times[7]);
+	
+	// square configuration
 	
 	begin = clock();
+
+	molecules[8] = new Molecule(&(molecules[2]));
 	
-	molecules[8] = new Molecule(n);
-	
-	costs[8];
+	costs[8]// = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[8]);
 	
 	end = clock();
 	
 	times[8] = getTime(begin,end);
 	
-	// random configuration
+	printf("Time 8: %f\n",times[8]);
+	
+	// loop over each molecules 'niters' times, once for each every iteration
+
+	// linear configuration
 	
 	begin = clock();
 	
-	molecules[9] = new Molecule(randmol);
+	molecules[9] = new Molecule(&(molecules[3]));
 	
 	costs[9];
 	
@@ -437,11 +347,13 @@ int main(int argc, char ** argv)
 	
 	times[9] = getTime(begin,end);
 	
+	printf("Time 9: %f\n",times[9]);
+
 	// circular configuration
 	
 	begin = clock();
 	
-	molecules[10] = new Molecule(circmol);
+	molecules[10] = new Molecule(&(molecules[4]));
 	
 	costs[10];
 	
@@ -449,11 +361,13 @@ int main(int argc, char ** argv)
 	
 	times[10] = getTime(begin,end);
 	
+	printf("Time 0: %f\n",times[10]);
+	
 	// square configuration
 		
 	begin = clock();
 	
-	molecules[11] = new Molecule(squaremol);
+	molecules[11] = new Molecule(&(molecules[5]));
 	
 	costs[11];
 	
@@ -461,20 +375,29 @@ int main(int argc, char ** argv)
 	
 	times[11] = getTime(begin,end);
 	
-	std::string cfolder = "coords/",subfolder;
-	cfolder = cfolder + std::to_string(n);
+	printf("Time 0: %f\n",times[11]);
 	
-	makeDirectory(cfolder.c_str());
+	begin = clock();
 	
-	cfolder = cfolder + "/";
+	std::string dFolder = "data/",dSubfolder;
+	std::string cFolder = "coords/",cSubfolder;
 	
-	for(int j = 0; j < 12; j++)
+	dFolder = dFolder + std::to_string(n);
+	cFolder = cFolder + std::to_string(n);
+	
+	makeDirectory(cFolder.c_str());
+	makeDirectory(dFolder.c_str());
+	
+	cFolder = cFolder + "/";
+	dFolder = dFolder + "/";
+	
+	for(int j = 0; j < 6; j++)
 	{
-		subfolder = cfolder + std::to_string(j) + ".csv";
-		
 		Molecule * mol = molecules[j];
 		
-		fs.open(subfolder,std::fstream::app);
+		cSubfolder = cFolder + std::to_string(j) + ".csv";
+		
+		fs.open(cSubfolder,std::fstream::app);
 		
 		fs << j << "," << mol->n << ",";
 		
@@ -491,7 +414,9 @@ int main(int argc, char ** argv)
 		
 		fs.close();
 		
-		fs.open(filenames[j],std::fstream::app);
+		dSubfolder = dFolder + std::to_string(j) + ".csv";
+		
+		fs.open(dSubfolder,std::fstream::app);
 		
 		if(fs)
 		{
@@ -513,6 +438,10 @@ int main(int argc, char ** argv)
 		
 		fs.close();
 	}
+	
+	end = clock();
+	
+	printf("Time to write: %f seconds.\n",getTime(begin,end));
 }
 
 #endif // I_MY3sy2M43uDRW3krlK4Oy3Et3o1B7

@@ -55,18 +55,9 @@ public:
 	// Member Functions
 	void random()
 	{
-		double valid = false;
-		
-		while(!valid)
+		for(int i = 0; i < n; i++)
 		{
-			for(int i = 0; i < n; i++)
-			{
-				alphas[i] = DEG2RAD * ((rand() % 180) - 180);
-			}
-			if (updateSystem() < 0.0f)
-			{
-				valid = true;
-			}
+			alphas[i] = DEG2RAD * ((rand() % 180) - 180);
 		}
 	}
 	

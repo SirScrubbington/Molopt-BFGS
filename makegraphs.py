@@ -18,6 +18,8 @@ titles = [
 		 ]
 
 def graphCSV(filename):
+	if os.path.isfile(filename+".png"):
+		return
 
 	with open(filename,"r") as fhandle:
 		for file in fhandle:

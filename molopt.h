@@ -28,6 +28,10 @@
 #include "Matrix.h"
 #include "Molecule.h"
 
+#include <string>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #ifndef DEG2RAD
 	#define DEG2RAD (M_PI/180.0f)
 #endif // DEG2RAD

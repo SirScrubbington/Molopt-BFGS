@@ -244,6 +244,8 @@ int main(int argc, char ** argv)
 	
 	gen = new std::mt19937(time(0));
 	
+	std::fstream fs;
+	
 	clock_t begin,end;
 	
 	// Constant testing data
@@ -259,6 +261,12 @@ int main(int argc, char ** argv)
 	std::string subdir = std::to_string(n);
 	std::string writepath = directory + subdir + "/";
 	
+	#if defined(_WIN32)
+		_mkdir(writepath.c_str()); // can be used on Windows
+	#else 
+		mkdir(writepath.c_str(),0733); // can be used on non-Windows
+	#endif
+	
 	std::string filenames[] = {"alData.csv","arData.csv","blData.csv","brData.csv","clData.csv","crData.csv"};
 	for(int i = 0; i < 6; i++)
 	{
@@ -268,6 +276,9 @@ int main(int argc, char ** argv)
 	//double alTime, arTime, blTime, brTime, clTime, crTime;
 	
 	//double alCost, arCost, blCost, brCost, clCost, crCost;
+	
+	Molecule randmol(n);
+	randmol.random();
 	
 	Molecule * molecules[6];
 	double times[6] = {0.0f};
@@ -290,9 +301,8 @@ int main(int argc, char ** argv)
 	// random configuration
 	
 	begin = clock();
-	
-	molecules[1] = new Molecule(n);
-	molecules[1]->random();
+
+	molecules[1] = new Molecule(randmol);
 	
 	costs[1] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[1]);
 	
@@ -318,8 +328,7 @@ int main(int argc, char ** argv)
 		
 	begin = clock();
 	
-	molecules[3] = new Molecule(n);
-	molecules[3]->random();
+	molecules[3] = new Molecule(randmol);
 	
 	costs[3] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[3]);
 	
@@ -346,18 +355,44 @@ int main(int argc, char ** argv)
 	
 	begin = clock();
 	
-	molecules[5] = new Molecule(n);
-	molecules[5]->random();
+	molecules[5] = new Molecule(randmol);
 	
 	costs[5] = centreOrientatedAnnealing(n,nIterations,tempfunc,&molecules[5]);
 	
 	end = clock();
 	
 	times[5] = getTime(begin,end);
-
-	for(int i = 0; i < 6; i++)
-		printf("%f, %f, %f\n",optimal[n-2],costs[i],times[i]);
-	printf("\n");
+	
+	for(int j = 0; j < 6; j++)
+	{
+		Molecule * mol = molecules[j];
+		
+		//fs.open();
+		
+		//fs.close();
+		
+		fs.open(filenames[j],std::fstream::app);
+		
+		if(fs)
+		{
+			for (int i=0;i<n;i++)
+			{
+				
+				fs << mol->alphas[i];
+				
+				if(i<n-1)
+				{
+					fs << ",";
+				}
+				else
+				{
+					fs << "," << costs[j] << "\n";
+				}
+			}
+		}
+		
+		fs.close();
+	}
 }
 
 #endif // I_MY3sy2M43uDRW3krlK4Oy3Et3o1B7

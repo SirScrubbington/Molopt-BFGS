@@ -14,7 +14,8 @@ std::mt19937 * gen;
 
 double randAngle()
 {
-	return DEG2RAD * (((*gen)() % 180) - 180);
+	int n = (*gen)() % 180;
+	return (double)n*DEG2RAD;
 }
 
 double accept()
@@ -44,24 +45,20 @@ double BeginOrientatedAnnealing
 
 	double T,E,pE,prev;
 	
-	int k;
-	
 	for(int i = 0; i < n; i++)
 	{
-		k = 1;
+		T = temp((double)n/(double)i);
 		
 		for(int j = 0; j < iters; j++)
 		{
-			T = temp((double)iters/(double)j);
-			
-			for(int a = 1; a < k; a++)
+			for(int a = 1; a < iters; a++)
 			{
 				pE = mol->updateSystem();
 				
 				double tv = mol->alphas[i];
 				
-				mol->alphas[i] = (double)(DEG2RAD * randAngle());
-
+				mol->alphas[i] = randAngle();
+				
 				E = mol->updateSystem();
 
 				if(E > pE)
@@ -78,11 +75,10 @@ double BeginOrientatedAnnealing
 					}
 				}
 			}
-			
-			k++;
-			
 		}
 	}
+	
+	//printf("Done begin orientated annealing\n");
 	
 	return mol->updateSystem();
 }
@@ -117,9 +113,9 @@ double IterativeAnnealing
 			{
 				pE = mol->updateSystem();
 				
-				double tv = mol->alphas[i];
+				double tv = mol->alphas[a];
 					
-				mol->alphas[i] = (double)(DEG2RAD * randAngle());
+				mol->alphas[a] = randAngle();
 
 				E = mol->updateSystem();
 
@@ -133,13 +129,16 @@ double IterativeAnnealing
 					}
 					else
 					{
-						mol->alphas[i] = tv;
+						mol->alphas[a] = tv;
 					}
 				}
 			}
 		}
 		k++;
 	}
+	
+	//printf("Done iterative orientated annealing\n");
+	
 	return mol->updateSystem();
 }
 
@@ -190,19 +189,17 @@ double centreOrientatedAnnealing
 	{
 		index = indexes.at(i);
 		
-		printf("%i\n",index);
-		
 		auto T = temp((double)n/(double)i);
 
-		for(int j = 0; j < k; j++)
+		for(int j = 0; j < iters; j++)
 		{
-			for(int a = 1; a < n; a++)
+			for(int a = 1; a < iters; a++)
 			{
 				pE = mol->updateSystem();
 				
 				double tv = mol->alphas[index];
-					
-				mol->alphas[index] = (double)(DEG2RAD * randAngle());
+
+				mol->alphas[index] = randAngle();
 
 				E = mol->updateSystem();
 
@@ -221,8 +218,10 @@ double centreOrientatedAnnealing
 				}
 			}
 		}
-		k++;
 	}
+	
+	//printf("Done centre orientated annealing\n");
+	
 	return mol->updateSystem();
 }
 
@@ -256,9 +255,23 @@ int main(int argc, char ** argv)
 	
 	Molecule * aLinear,* aRandom,* bLinear,* bRandom,* cLinear,* cRandom;
 	
-	double alTime, arTime, blTime, brTime, clTime, crTime;
+	std::string directory = "data/";
+	std::string subdir = std::to_string(n);
+	std::string writepath = directory + subdir + "/";
 	
-	double alCost, arCost, blCost, brCost, clCost, crCost;
+	std::string filenames[] = {"alData.csv","arData.csv","blData.csv","brData.csv","clData.csv","crData.csv"};
+	for(int i = 0; i < 6; i++)
+	{
+		filenames[i] = writepath + filenames[i];
+	}
+	
+	//double alTime, arTime, blTime, brTime, clTime, crTime;
+	
+	//double alCost, arCost, blCost, brCost, clCost, crCost;
+	
+	Molecule * molecules[6];
+	double times[6] = {0.0f};
+	double costs[6] = {0.0f};
 	
 	// loop over all atoms 'niters' times at once, then progress to next atom
 
@@ -266,22 +279,26 @@ int main(int argc, char ** argv)
 	
 	begin = clock();
 	
-	aLinear = new Molecule(n);
+	molecules[0] = new Molecule(n);
+	
+	costs[0] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[0]);
 	
 	end = clock();
 	
-	alTime = getTime(begin,end);
+	times[0] = getTime(begin,end);
 	
 	// random configuration
 	
 	begin = clock();
 	
-	aRandom = new Molecule(n);
-	aRandom->random();
+	molecules[1] = new Molecule(n);
+	molecules[1]->random();
+	
+	costs[1] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[1]);
 	
 	end = clock();
 	
-	arTime = getTime(begin,end);
+	times[1] = getTime(begin,end);
 	
 	// loop over each molecules 'niters' times, once for each every iteration
 
@@ -289,22 +306,26 @@ int main(int argc, char ** argv)
 	
 	begin = clock();
 	
-	bLinear = new Molecule(n);
+	molecules[2] = new Molecule(n);
+	
+	costs[2] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[2]);
 	
 	end = clock();
 	
-	blTime = getTime(begin,end);
+	times[2] = getTime(begin,end);
 	
 	// random configuration
 		
 	begin = clock();
 	
-	bRandom = new Molecule(n);
-	bRandom->random();
+	molecules[3] = new Molecule(n);
+	molecules[3]->random();
+	
+	costs[3] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[3]);
 	
 	end = clock();
 	
-	brTime = getTime(begin,end);
+	times[3] = getTime(begin,end);
 		
 	// loop over each molecule 'niters' times at once, starting at the center and expanding outward
 	// (starting with n/2, -> n/2 + 1, n/2 -1, n/2 + 2, ...  n/2 - n/2, n/2 + n/2
@@ -313,30 +334,30 @@ int main(int argc, char ** argv)
 	
 	begin = clock();
 	
-	cLinear = new Molecule(n);
+	molecules[4] = new Molecule(n);
 	
-	clCost = centreOrientatedAnnealing(n,nIterations,tempfunc,&cLinear);
+	costs[4] = centreOrientatedAnnealing(n,nIterations,tempfunc,&molecules[4]);
 	
 	end = clock();
 	
-	clTime = getTime(begin,end);
+	times[4] = getTime(begin,end);
 	
 	// random configuration
 	
 	begin = clock();
 	
-	cRandom = new Molecule(n);
-	cRandom->random();
+	molecules[5] = new Molecule(n);
+	molecules[5]->random();
 	
-	crCost = centreOrientatedAnnealing(n,nIterations,tempfunc,&cRandom);
+	costs[5] = centreOrientatedAnnealing(n,nIterations,tempfunc,&molecules[5]);
 	
 	end = clock();
 	
-	crTime = getTime(begin,end);
-	
-	printf("%f, %f\n",clCost,crCost);
-	
-	return 0;
+	times[5] = getTime(begin,end);
+
+	for(int i = 0; i < 6; i++)
+		printf("%f, %f, %f\n",optimal[n-2],costs[i],times[i]);
+	printf("\n");
 }
 
 #endif // I_MY3sy2M43uDRW3krlK4Oy3Et3o1B7

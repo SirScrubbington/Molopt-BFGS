@@ -1,742 +1,414 @@
-data/2.csv
-Atoms	Optimal	Found	Error	Gen	Time
-2	-1.00	-1.00	0.00	50	0.00
-data/3.csv
-Atoms	Optimal	Found	Error	Gen	Time
-3	-3.00	-2.95	1.80	50	0.00
-data/4.csv
-Atoms	Optimal	Found	Error	Gen	Time
-4	-5.10	-5.07	0.54	50	0.00
-data/5.csv
-Atoms	Optimal	Found	Error	Gen	Time
-5	-7.20	-7.08	1.68	50	0.01
-data/6.csv
-Atoms	Optimal	Found	Error	Gen	Time
-6	-9.30	-9.33	0.36	50	0.03
-data/7.csv
-Atoms	Optimal	Found	Error	Gen	Time
-7	-12.50	-12.49	0.11	50	0.08
-data/8.csv
-Atoms	Optimal	Found	Error	Gen	Time
-8	-14.70	-14.67	0.22	50	0.14
-data/9.csv
-Atoms	Optimal	Found	Error	Gen	Time
-9	-16.90	-15.80	6.49	50	0.23
-data/10.csv
-Atoms	Optimal	Found	Error	Gen	Time
-10	-20.10	-20.03	0.36	50	0.36
-data/11.csv
-Atoms	Optimal	Found	Error	Gen	Time
-11	-22.30	-22.24	0.29	50	0.53
-data/12.csv
-Atoms	Optimal	Found	Error	Gen	Time
-12	-25.50	-25.42	0.33	50	0.78
-data/13.csv
-Atoms	Optimal	Found	Error	Gen	Time
-13	-27.80	-27.19	2.18	50	1.09
-data/14.csv
-Atoms	Optimal	Found	Error	Gen	Time
-14	-31.00	-27.11	12.56	50	1.53
-data/15.csv
-Atoms	Optimal	Found	Error	Gen	Time
-15	-33.20	-32.34	2.60	50	2.05
-data/16.csv
-Atoms	Optimal	Found	Error	Gen	Time
-16	-36.50	-36.33	0.46	50	2.58
-data/17.csv
-Atoms	Optimal	Found	Error	Gen	Time
-17	-38.70	-38.37	0.84	50	3.36
-data/18.csv
-Atoms	Optimal	Found	Error	Gen	Time
-18	-42.00	-41.54	1.10	50	4.30
-data/19.csv
-Atoms	Optimal	Found	Error	Gen	Time
-19	-45.30	-43.76	3.40	50	5.56
-data/20.csv
-Atoms	Optimal	Found	Error	Gen	Time
-20	-47.50	-45.50	4.21	50	6.95
-data/21.csv
-Atoms	Optimal	Found	Error	Gen	Time
-21	-50.80	-49.71	2.14	50	8.52
-data/22.csv
-Atoms	Optimal	Found	Error	Gen	Time
-22	-53.00	-50.41	4.88	50	10.33
-data/23.csv
-Atoms	Optimal	Found	Error	Gen	Time
-23	-56.30	-56.07	0.40	50	12.11
-data/24.csv
-Atoms	Optimal	Found	Error	Gen	Time
-24	-59.60	-51.79	13.10	50	15.11
-data/25.csv
-Atoms	Optimal	Found	Error	Gen	Time
-25	-61.80	-54.76	11.39	50	17.88
-data/26.csv
-Atoms	Optimal	Found	Error	Gen	Time
-26	-65.10	-62.44	4.09	50	21.08
-data/27.csv
-Atoms	Optimal	Found	Error	Gen	Time
-27	-68.40	-63.95	6.50	50	24.62
-data/28.csv
-Atoms	Optimal	Found	Error	Gen	Time
-28	-70.00	-70.04	0.05	50	28.05
-data/29.csv
-Atoms	Optimal	Found	Error	Gen	Time
-29	-74.00	-72.88	1.51	50	32.28
-data/30.csv
-Atoms	Optimal	Found	Error	Gen	Time
-30	-77.20	-76.17	1.33	50	37.23
-data/31.csv
-Atoms	Optimal	Found	Error	Gen	Time
-31	-79.50	-75.58	4.93	50	43.11
-data/32.csv
-Atoms	Optimal	Found	Error	Gen	Time
-32	-82.80	-77.88	5.94	50	49.41
-data/33.csv
-Atoms	Optimal	Found	Error	Gen	Time
-33	-86.10	-83.17	3.41	50	55.94
-data/34.csv
-Atoms	Optimal	Found	Error	Gen	Time
-34	-88.30	-78.56	11.03	50	63.64
-data/35.csv
-Atoms	Optimal	Found	Error	Gen	Time
-35	-91.70	-84.24	8.14	50	71.89
-data/36.csv
-Atoms	Optimal	Found	Error	Gen	Time
-36	-95.00	-90.33	4.92	50	80.02
-data/37.csv
-Atoms	Optimal	Found	Error	Gen	Time
-37	-98.30	-88.48	9.99	50	90.02
-data/38.csv
-Atoms	Optimal	Found	Error	Gen	Time
-38	-100.50	-98.61	1.88	50	99.80
-data/39.csv
-Atoms	Optimal	Found	Error	Gen	Time
-39	-103.80	-nan	nan	50	114.64
-data/40.csv
-Atoms	Optimal	Found	Error	Gen	Time
-40	-107.10	-nan	nan	50	130.97
-data/41.csv
-Atoms	Optimal	Found	Error	Gen	Time
-41	-109.40	-101.35	7.36	50	136.31
-data/42.csv
-Atoms	Optimal	Found	Error	Gen	Time
-42	-112.70	-109.17	3.13	50	150.41
-data/43.csv
-Atoms	Optimal	Found	Error	Gen	Time
-43	-116.00	-113.68	2.00	50	164.89
-data/44.csv
-Atoms	Optimal	Found	Error	Gen	Time
-44	-119.30	-110.42	7.44	50	183.95
-data/45.csv
-Atoms	Optimal	Found	Error	Gen	Time
-45	-121.60	-86.91	28.53	50	202.98
-data/46.csv
-Atoms	Optimal	Found	Error	Gen	Time
-46	-124.90	-114.48	8.34	50	215.76
-data/47.csv
-Atoms	Optimal	Found	Error	Gen	Time
-47	-128.60	-107.73	16.23	50	236.12
-data/48.csv
-Atoms	Optimal	Found	Error	Gen	Time
-48	-131.50	-122.65	6.73	50	258.80
-data/49.csv
-Atoms	Optimal	Found	Error	Gen	Time
-49	-133.80	-122.06	8.77	50	278.61
-data/50.csv
-Atoms	Optimal	Found	Error	Gen	Time
-50	-137.10	-126.47	7.76	50	315.86
-data/51.csv
-Atoms	Optimal	Found	Error	Gen	Time
-51	-140.50	-135.03	3.89	50	344.61
-data/52.csv
-Atoms	Optimal	Found	Error	Gen	Time
-52	-143.70	-nan	nan	50	374.00
-data/53.csv
-Atoms	Optimal	Found	Error	Gen	Time
-53	-146.00	-128.70	11.85	50	396.81
-data/54.csv
-Atoms	Optimal	Found	Error	Gen	Time
-54	-149.30	-135.36	9.34	50	444.76
-data/55.csv
-Atoms	Optimal	Found	Error	Gen	Time
-55	-152.70	-138.31	9.42	50	476.11
-data/56.csv
-Atoms	Optimal	Found	Error	Gen	Time
-56	-154.70	-140.02	9.49	50	513.33
-data/57.csv
-Atoms	Optimal	Found	Error	Gen	Time
-57	-157.40	-148.32	5.77	50	546.31
-data/58.csv
-Atoms	Optimal	Found	Error	Gen	Time
-58	-160.20	-144.57	9.76	50	591.67
-data/59.csv
-Atoms	Optimal	Found	Error	Gen	Time
-59	-163.00	-nan	nan	50	633.75
-data/60.csv
-Atoms	Optimal	Found	Error	Gen	Time
-60	-164.00	-nan	nan	50	682.05
-Pre-BFGS: -1.000000
-Post-BFGS: -1.000000
-data/2.csv
-Atoms	Optimal	Found	Error	Gen	Time
-2	-1.00	-1.00	0.00	50	0.00
-Pre-BFGS: -3.000000
-Post-BFGS: -3.000000
-data/3.csv
-Atoms	Optimal	Found	Error	Gen	Time
-3	-3.00	-3.00	0.00	50	0.00
-Pre-BFGS: -5.028976
-Post-BFGS: -5.029390
-data/4.csv
-Atoms	Optimal	Found	Error	Gen	Time
-4	-5.10	-5.03	1.38	50	0.02
-Pre-BFGS: -7.163480
-Post-BFGS: -7.166259
-data/5.csv
-Atoms	Optimal	Found	Error	Gen	Time
-5	-7.20	-7.17	0.47	50	0.03
-Pre-BFGS: -9.337433
-Post-BFGS: -9.344336
-data/6.csv
-Atoms	Optimal	Found	Error	Gen	Time
-6	-9.30	-9.34	0.48	50	0.06
-Pre-BFGS: -11.884272
-Post-BFGS: -12.077399
-data/7.csv
-Atoms	Optimal	Found	Error	Gen	Time
-7	-12.50	-12.08	3.38	50	0.09
-Pre-BFGS: -14.660208
-Post-BFGS: -14.662318
-data/8.csv
-Atoms	Optimal	Found	Error	Gen	Time
-8	-14.70	-14.66	0.26	50	0.17
-Pre-BFGS: -16.840610
-Post-BFGS: -16.870677
-data/9.csv
-Atoms	Optimal	Found	Error	Gen	Time
-9	-16.90	-16.87	0.17	50	0.27
-Pre-BFGS: -20.020257
-Post-BFGS: -20.057332
-data/10.csv
-Atoms	Optimal	Found	Error	Gen	Time
-10	-20.10	-20.06	0.21	50	0.41
-Pre-BFGS: -20.657075
-Post-BFGS: -20.659577
-data/11.csv
-Atoms	Optimal	Found	Error	Gen	Time
-11	-22.30	-20.66	7.36	50	0.61
-Pre-BFGS: -25.289624
-Post-BFGS: -25.502331
-data/12.csv
-Atoms	Optimal	Found	Error	Gen	Time
-12	-25.50	-25.50	0.01	50	0.81
-Pre-BFGS: -27.650501
-Post-BFGS: -27.752112
-data/13.csv
-Atoms	Optimal	Found	Error	Gen	Time
-13	-27.80	-27.75	0.17	50	1.16
-Pre-BFGS: -30.453325
-Post-BFGS: -30.992935
-data/14.csv
-Atoms	Optimal	Found	Error	Gen	Time
-14	-31.00	-30.99	0.02	50	1.48
-Pre-BFGS: -32.787365
-Post-BFGS: -32.970933
-data/15.csv
-Atoms	Optimal	Found	Error	Gen	Time
-15	-33.20	-32.97	0.69	50	2.06
-Pre-BFGS: -36.173371
-Post-BFGS: -36.447882
-data/16.csv
-Atoms	Optimal	Found	Error	Gen	Time
-16	-36.50	-36.45	0.14	50	2.62
-Pre-BFGS: -38.351383
-Post-BFGS: -38.598706
-data/17.csv
-Atoms	Optimal	Found	Error	Gen	Time
-17	-38.70	-38.60	0.26	50	3.55
-Pre-BFGS: -41.833269
-Post-BFGS: -42.029430
-data/18.csv
-Atoms	Optimal	Found	Error	Gen	Time
-18	-42.00	-42.03	0.07	50	4.31
-Pre-BFGS: -44.829538
-Post-BFGS: -45.289922
-data/19.csv
-Atoms	Optimal	Found	Error	Gen	Time
-19	-45.30	-45.29	0.02	50	5.23
-Pre-BFGS: -47.042367
-Post-BFGS: -47.402400
-data/20.csv
-Atoms	Optimal	Found	Error	Gen	Time
-20	-47.50	-47.40	0.21	50	6.64
-Pre-BFGS: -49.962812
-Post-BFGS: -50.725218
-data/21.csv
-Atoms	Optimal	Found	Error	Gen	Time
-21	-50.80	-50.73	0.15	50	8.09
-Pre-BFGS: -1.000000
-Post-BFGS: -1.000000
-data/2.csv
-Atoms	Optimal	Found	Error	Gen	Time
-2	-1.00	-1.00	0.00	50	0.00
-Pre-BFGS: -3.000000
-Post-BFGS: -3.000000
-data/3.csv
-Atoms	Optimal	Found	Error	Gen	Time
-3	-3.00	-3.00	0.00	50	0.01
-Pre-BFGS: -1.000000
-Post-BFGS: -1.000000
-data/2.csv
-Atoms	Optimal	Found	Error	Gen	Time
-2	-1.00	-1.00	0.00	50	0.00
-Pre-BFGS: -2.799915
-Post-BFGS: -2.799915
-data/3.csv
-Atoms	Optimal	Found	Error	Gen	Time
-3	-3.00	-2.80	6.67	50	0.00
-Pre-BFGS: -5.065708
-Post-BFGS: -5.065632
-data/4.csv
-Atoms	Optimal	Found	Error	Gen	Time
-4	-5.10	-5.07	0.67	50	0.09
-Pre-BFGS: -7.160672
-Post-BFGS: -7.163892
-data/5.csv
-Atoms	Optimal	Found	Error	Gen	Time
-5	-7.20	-7.16	0.50	50	0.14
-Pre-BFGS: -9.344740
-Post-BFGS: -9.167070
-data/6.csv
-Atoms	Optimal	Found	Error	Gen	Time
-6	-9.30	-9.17	1.43	50	0.25
-Pre-BFGS: -12.485497
-Post-BFGS: -12.530046
-data/7.csv
-Atoms	Optimal	Found	Error	Gen	Time
-7	-12.50	-12.53	0.24	50	0.36
-Pre-BFGS: -12.973780
-Post-BFGS: -12.593070
-data/8.csv
-Atoms	Optimal	Found	Error	Gen	Time
-8	-14.70	-12.59	14.33	50	0.58
-Pre-BFGS: -16.864207
-Post-BFGS: -16.857163
-data/9.csv
-Atoms	Optimal	Found	Error	Gen	Time
-9	-16.90	-16.86	0.25	50	0.78
-Pre-BFGS: -19.986870
-Post-BFGS: -20.021843
-data/10.csv
-Atoms	Optimal	Found	Error	Gen	Time
-10	-20.10	-20.02	0.39	50	1.14
-Pre-BFGS: -22.300436
-Post-BFGS: -16.181745
-data/11.csv
-Atoms	Optimal	Found	Error	Gen	Time
-11	-22.30	-16.18	27.44	50	1.53
-Pre-BFGS: -25.255857
-Post-BFGS: -25.508589
-data/12.csv
-Atoms	Optimal	Found	Error	Gen	Time
-12	-25.50	-25.51	0.03	50	2.02
-Pre-BFGS: -27.611495
-Post-BFGS: -27.746297
-data/13.csv
-Atoms	Optimal	Found	Error	Gen	Time
-13	-27.80	-27.75	0.19	50	2.61
-Pre-BFGS: -30.850387
-Post-BFGS: -30.632470
-data/14.csv
-Atoms	Optimal	Found	Error	Gen	Time
-14	-31.00	-30.63	1.19	50	3.45
-Pre-BFGS: -32.743911
-Post-BFGS: -32.997785
-data/15.csv
-Atoms	Optimal	Found	Error	Gen	Time
-15	-33.20	-33.00	0.61	50	4.11
-Pre-BFGS: -35.833228
-Post-BFGS: -36.361351
-data/16.csv
-Atoms	Optimal	Found	Error	Gen	Time
-16	-36.50	-36.36	0.38	50	5.34
-Pre-BFGS: -38.262814
-Post-BFGS: -38.666841
-data/17.csv
-Atoms	Optimal	Found	Error	Gen	Time
-17	-38.70	-38.67	0.09	50	6.58
-Pre-BFGS: -40.036086
-Post-BFGS: -40.260592
-data/18.csv
-Atoms	Optimal	Found	Error	Gen	Time
-18	-42.00	-40.26	4.14	50	8.28
-Pre-BFGS: -42.181131
-Post-BFGS: -42.621976
-data/19.csv
-Atoms	Optimal	Found	Error	Gen	Time
-19	-45.30	-42.62	5.91	50	9.80
-Pre-BFGS: -45.849548
-Post-BFGS: -47.108586
-data/20.csv
-Atoms	Optimal	Found	Error	Gen	Time
-20	-47.50	-47.11	0.82	50	11.80
-Pre-BFGS: -50.021008
-Post-BFGS: -50.442142
-data/21.csv
-Atoms	Optimal	Found	Error	Gen	Time
-21	-50.80	-50.44	0.70	50	13.53
-Pre-BFGS: -1.000000
-Post-BFGS: -1.000000
-data/2.csv
-Atoms	Optimal	Found	Error	Gen	Time
-2	-1.00	-1.00	0.00	50	0.00
-Pre-BFGS: -3.000000
-Post-BFGS: -3.000000
-data/3.csv
-Atoms	Optimal	Found	Error	Gen	Time
-3	-3.00	-3.00	0.00	50	0.00
-Pre-BFGS: -5.061393
-Post-BFGS: -5.061393
-data/4.csv
-Atoms	Optimal	Found	Error	Gen	Time
-4	-5.10	-5.06	0.76	50	0.00
-Pre-BFGS: -7.176411
-Post-BFGS: -7.176640
-data/5.csv
-Atoms	Optimal	Found	Error	Gen	Time
-5	-7.20	-7.18	0.32	50	0.03
-Pre-BFGS: -9.337820
-Post-BFGS: -9.353626
-data/6.csv
-Atoms	Optimal	Found	Error	Gen	Time
-6	-9.30	-9.35	0.58	50	0.05
-Pre-BFGS: -12.519011
-Post-BFGS: -12.529239
-data/7.csv
-Atoms	Optimal	Found	Error	Gen	Time
-7	-12.50	-12.53	0.23	50	0.09
-Pre-BFGS: -14.595864
-Post-BFGS: -14.627714
-data/8.csv
-Atoms	Optimal	Found	Error	Gen	Time
-8	-14.70	-14.63	0.49	50	0.17
-Pre-BFGS: -16.820003
-Post-BFGS: -16.837189
-data/9.csv
-Atoms	Optimal	Found	Error	Gen	Time
-9	-16.90	-16.84	0.37	50	0.28
-Pre-BFGS: -20.070885
-Post-BFGS: -20.081309
-data/10.csv
-Atoms	Optimal	Found	Error	Gen	Time
-10	-20.10	-20.08	0.09	50	0.39
-Pre-BFGS: -22.272333
-Post-BFGS: -22.282456
-data/11.csv
-Atoms	Optimal	Found	Error	Gen	Time
-11	-22.30	-22.28	0.08	50	0.61
-Pre-BFGS: -25.245336
-Post-BFGS: -25.504873
-data/12.csv
-Atoms	Optimal	Found	Error	Gen	Time
-12	-25.50	-25.50	0.02	50	0.89
-Pre-BFGS: -27.514990
-Post-BFGS: -27.712410
-data/13.csv
-Atoms	Optimal	Found	Error	Gen	Time
-13	-27.80	-27.71	0.32	50	1.16
-Pre-BFGS: -30.896800
-Post-BFGS: -30.961394
-data/14.csv
-Atoms	Optimal	Found	Error	Gen	Time
-14	-31.00	-30.96	0.12	50	1.56
-Pre-BFGS: -32.827215
-Post-BFGS: -33.124561
-data/15.csv
-Atoms	Optimal	Found	Error	Gen	Time
-15	-33.20	-33.12	0.23	50	2.08
-Pre-BFGS: -36.134968
-Post-BFGS: -36.410321
-data/16.csv
-Atoms	Optimal	Found	Error	Gen	Time
-16	-36.50	-36.41	0.25	50	2.62
-Pre-BFGS: -38.185015
-Post-BFGS: -38.604600
-data/17.csv
-Atoms	Optimal	Found	Error	Gen	Time
-17	-38.70	-38.60	0.25	50	3.55
-Pre-BFGS: -40.242320
-Post-BFGS: -40.570698
-data/18.csv
-Atoms	Optimal	Found	Error	Gen	Time
-18	-42.00	-40.57	3.40	50	4.45
-Pre-BFGS: -44.118502
-Post-BFGS: -45.105168
-data/19.csv
-Atoms	Optimal	Found	Error	Gen	Time
-19	-45.30	-45.11	0.43	50	5.39
-Pre-BFGS: -46.150502
-Post-BFGS: -47.345207
-data/20.csv
-Atoms	Optimal	Found	Error	Gen	Time
-20	-47.50	-47.35	0.33	50	7.00
-Pre-BFGS: -49.207059
-Post-BFGS: -50.710239
-data/21.csv
-Atoms	Optimal	Found	Error	Gen	Time
-21	-50.80	-50.71	0.18	50	8.11
-Pre-BFGS: -19.370600
-Post-BFGS: -39.928347
-data/22.csv
-Atoms	Optimal	Found	Error	Gen	Time
-22	-53.00	-39.93	24.66	50	10.25
-Pre-BFGS: -54.893978
-Post-BFGS: -55.053010
-data/23.csv
-Atoms	Optimal	Found	Error	Gen	Time
-23	-56.30	-55.05	2.21	50	12.14
-Pre-BFGS: -58.404982
-Post-BFGS: -59.313643
-data/24.csv
-Atoms	Optimal	Found	Error	Gen	Time
-24	-59.60	-59.31	0.48	50	14.53
-Pre-BFGS: -61.166120
-Post-BFGS: -61.792911
-data/25.csv
-Atoms	Optimal	Found	Error	Gen	Time
-25	-61.80	-61.79	0.01	50	16.92
-Pre-BFGS: -64.502102
-Post-BFGS: -64.961450
-data/26.csv
-Atoms	Optimal	Found	Error	Gen	Time
-26	-65.10	-64.96	0.21	50	20.48
-Pre-BFGS: -nan
-Post-BFGS: 91162565054.837189
-data/27.csv
-Atoms	Optimal	Found	Error	Gen	Time
-27	-68.40	91162565054.84	133278601008.14	50	24.47
-Pre-BFGS: -nan
-Post-BFGS: 879481251159347.875000
-data/28.csv
-Atoms	Optimal	Found	Error	Gen	Time
-28	-70.00	879481251159347.88	1256401787370597.00	50	29.25
-Pre-BFGS: -69.591355
-Post-BFGS: -71.034459
-data/29.csv
-Atoms	Optimal	Found	Error	Gen	Time
-29	-74.00	-71.03	4.01	50	30.77
-Pre-BFGS: -70.301808
-Post-BFGS: -74.822168
-data/30.csv
-Atoms	Optimal	Found	Error	Gen	Time
-30	-77.20	-74.82	3.08	50	36.53
-Pre-BFGS: -75.338361
-Post-BFGS: -78.997521
-data/31.csv
-Atoms	Optimal	Found	Error	Gen	Time
-31	-79.50	-79.00	0.63	50	40.56
-Pre-BFGS: -80.901511
-Post-BFGS: -81.445244
-data/32.csv
-Atoms	Optimal	Found	Error	Gen	Time
-32	-82.80	-81.45	1.64	50	46.53
-Pre-BFGS: -77.017945
-Post-BFGS: -77.738366
-data/33.csv
-Atoms	Optimal	Found	Error	Gen	Time
-33	-86.10	-77.74	9.71	50	52.84
-Pre-BFGS: -86.528422
-Post-BFGS: -88.059576
-data/34.csv
-Atoms	Optimal	Found	Error	Gen	Time
-34	-88.30	-88.06	0.27	50	58.75
-Pre-BFGS: -81.406939
-Post-BFGS: -84.968442
-data/35.csv
-Atoms	Optimal	Found	Error	Gen	Time
-35	-91.70	-84.97	7.34	50	70.05
-Pre-BFGS: -77.058789
-Post-BFGS: -84.115497
-data/36.csv
-Atoms	Optimal	Found	Error	Gen	Time
-36	-95.00	-84.12	11.46	50	76.52
-Pre-BFGS: -87.640662
-Post-BFGS: -91.150359
-data/37.csv
-Atoms	Optimal	Found	Error	Gen	Time
-37	-98.30	-91.15	7.27	50	85.62
-Pre-BFGS: -95.384479
-Post-BFGS: -99.615826
-data/38.csv
-Atoms	Optimal	Found	Error	Gen	Time
-38	-100.50	-99.62	0.88	50	94.86
-Pre-BFGS: -96.223556
-Post-BFGS: -100.521424
-data/39.csv
-Atoms	Optimal	Found	Error	Gen	Time
-39	-103.80	-100.52	3.16	50	104.92
-1
-0
-1
-0
--1.000000, -1.000000
-1
-2
-0
-1
-2
-0
--2.153868, -2.093935
-2
-1
-3
-0
-2
-1
-3
-0
--3.240996, -3.246173
-2
-3
-1
-4
-0
-2
-3
-1
-4
-0
--4.327838, -5.928907
-3
-2
-4
-1
-5
-0
-3
-2
-4
-1
-5
-0
--5.420836, -5.700156
-3
-4
-2
-5
-1
-6
-0
-3
-4
-2
-5
-1
-6
-0
--6.538563, -8.260228
-4
-3
-5
-2
-6
-1
-7
-0
-4
-3
-5
-2
-6
-1
-7
-0
--8.018979, -8.574270
-4
-5
-3
-6
-2
-7
-1
-8
-0
-4
-5
-3
-6
-2
-7
-1
-8
-0
--9.063906, -12.085627
-5
-4
-6
-3
-7
-2
-8
-1
-9
-0
-5
-4
-6
-3
-7
-2
-8
-1
-9
-0
--11.075505, -11.857917
-5
-6
-4
-7
-3
-8
-2
-9
-1
-10
-0
-5
-6
-4
-7
-3
-8
-2
-9
-1
-10
-0
--5.899836, -14.012842
-6
-5
-7
-4
-8
-3
-9
-2
-10
-1
-11
-0
-6
-5
-7
-4
-8
-3
-9
-2
-10
-1
-11
-0
--12.738365, -15.707951
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/3/0.csv
+coords/3/1.csv
+coords/3/2.csv
+coords/3/3.csv
+coords/3/4.csv
+coords/3/5.csv
+coords/4/0.csv
+coords/4/1.csv
+coords/4/2.csv
+coords/4/3.csv
+coords/4/4.csv
+coords/4/5.csv
+coords/5/0.csv
+coords/5/1.csv
+coords/5/2.csv
+coords/5/3.csv
+coords/5/4.csv
+coords/5/5.csv
+coords/6/0.csv
+coords/6/1.csv
+coords/6/2.csv
+coords/6/3.csv
+coords/6/4.csv
+coords/6/5.csv
+coords/7/0.csv
+coords/7/1.csv
+coords/7/2.csv
+coords/7/3.csv
+coords/7/4.csv
+coords/7/5.csv
+coords/8/0.csv
+coords/8/1.csv
+coords/8/2.csv
+coords/8/3.csv
+coords/8/4.csv
+coords/8/5.csv
+coords/9/0.csv
+coords/9/1.csv
+coords/9/2.csv
+coords/9/3.csv
+coords/9/4.csv
+coords/9/5.csv
+coords/10/0.csv
+coords/10/1.csv
+coords/10/2.csv
+coords/10/3.csv
+coords/10/4.csv
+coords/10/5.csv
+coords/11/0.csv
+coords/11/1.csv
+coords/11/2.csv
+coords/11/3.csv
+coords/11/4.csv
+coords/11/5.csv
+coords/12/0.csv
+coords/12/1.csv
+coords/12/2.csv
+coords/12/3.csv
+coords/12/4.csv
+coords/12/5.csv
+coords/13/0.csv
+coords/13/1.csv
+coords/13/2.csv
+coords/13/3.csv
+coords/13/4.csv
+coords/13/5.csv
+coords/14/0.csv
+coords/14/1.csv
+coords/14/2.csv
+coords/14/3.csv
+coords/14/4.csv
+coords/14/5.csv
+coords/15/0.csv
+coords/15/1.csv
+coords/15/2.csv
+coords/15/3.csv
+coords/15/4.csv
+coords/15/5.csv
+coords/16/0.csv
+coords/16/1.csv
+coords/16/2.csv
+coords/16/3.csv
+coords/16/4.csv
+coords/16/5.csv
+coords/17/0.csv
+coords/17/1.csv
+coords/17/2.csv
+coords/17/3.csv
+coords/17/4.csv
+coords/17/5.csv
+coords/18/0.csv
+coords/18/1.csv
+coords/18/2.csv
+coords/18/3.csv
+coords/18/4.csv
+coords/18/5.csv
+coords/19/0.csv
+coords/19/1.csv
+coords/19/2.csv
+coords/19/3.csv
+coords/19/4.csv
+coords/19/5.csv
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/3/0.csv
+coords/3/1.csv
+coords/3/2.csv
+coords/3/3.csv
+coords/3/4.csv
+coords/3/5.csv
+coords/4/0.csv
+coords/4/1.csv
+coords/4/2.csv
+coords/4/3.csv
+coords/4/4.csv
+coords/4/5.csv
+coords/5/0.csv
+coords/5/1.csv
+coords/5/2.csv
+coords/5/3.csv
+coords/5/4.csv
+coords/5/5.csv
+coords/6/0.csv
+coords/6/1.csv
+coords/6/2.csv
+coords/6/3.csv
+coords/6/4.csv
+coords/6/5.csv
+coords/7/0.csv
+coords/7/1.csv
+coords/7/2.csv
+coords/7/3.csv
+coords/7/4.csv
+coords/7/5.csv
+coords/8/0.csv
+coords/8/1.csv
+coords/8/2.csv
+coords/8/3.csv
+coords/8/4.csv
+coords/8/5.csv
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/3/0.csv
+coords/3/1.csv
+coords/3/2.csv
+coords/3/3.csv
+coords/3/4.csv
+coords/3/5.csv
+coords/4/0.csv
+coords/4/1.csv
+coords/4/2.csv
+coords/4/3.csv
+coords/4/4.csv
+coords/4/5.csv
+coords/5/0.csv
+coords/5/1.csv
+coords/5/2.csv
+coords/5/3.csv
+coords/5/4.csv
+coords/5/5.csv
+coords/6/0.csv
+coords/6/1.csv
+coords/6/2.csv
+coords/6/3.csv
+coords/6/4.csv
+coords/6/5.csv
+coords/7/0.csv
+coords/7/1.csv
+coords/7/2.csv
+coords/7/3.csv
+coords/7/4.csv
+coords/7/5.csv
+coords/8/0.csv
+coords/8/1.csv
+coords/8/2.csv
+coords/8/3.csv
+coords/8/4.csv
+coords/8/5.csv
+coords/9/0.csv
+coords/9/1.csv
+coords/9/2.csv
+coords/9/3.csv
+coords/9/4.csv
+coords/9/5.csv
+coords/10/0.csv
+coords/10/1.csv
+coords/10/2.csv
+coords/10/3.csv
+coords/10/4.csv
+coords/10/5.csv
+coords/11/0.csv
+coords/11/1.csv
+coords/11/2.csv
+coords/11/3.csv
+coords/11/4.csv
+coords/11/5.csv
+coords/12/0.csv
+coords/12/1.csv
+coords/12/2.csv
+coords/12/3.csv
+coords/12/4.csv
+coords/12/5.csv
+coords/13/0.csv
+coords/13/1.csv
+coords/13/2.csv
+coords/13/3.csv
+coords/13/4.csv
+coords/13/5.csv
+coords/14/0.csv
+coords/14/1.csv
+coords/14/2.csv
+coords/14/3.csv
+coords/14/4.csv
+coords/14/5.csv
+coords/15/0.csv
+coords/15/1.csv
+coords/15/2.csv
+coords/15/3.csv
+coords/15/4.csv
+coords/15/5.csv
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/3/0.csv
+coords/3/1.csv
+coords/3/2.csv
+coords/3/3.csv
+coords/3/4.csv
+coords/3/5.csv
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/3/0.csv
+coords/3/1.csv
+coords/3/2.csv
+coords/3/3.csv
+coords/3/4.csv
+coords/3/5.csv
+coords/4/0.csv
+coords/4/1.csv
+coords/4/2.csv
+coords/4/3.csv
+coords/4/4.csv
+coords/4/5.csv
+coords/5/0.csv
+coords/5/1.csv
+coords/5/2.csv
+coords/5/3.csv
+coords/5/4.csv
+coords/5/5.csv
+coords/6/0.csv
+coords/6/1.csv
+coords/6/2.csv
+coords/6/3.csv
+coords/6/4.csv
+coords/6/5.csv
+coords/7/0.csv
+coords/7/1.csv
+coords/7/2.csv
+coords/7/3.csv
+coords/7/4.csv
+coords/7/5.csv
+coords/8/0.csv
+coords/8/1.csv
+coords/8/2.csv
+coords/8/3.csv
+coords/8/4.csv
+coords/8/5.csv
+coords/9/0.csv
+coords/9/1.csv
+coords/9/2.csv
+coords/9/3.csv
+coords/9/4.csv
+coords/9/5.csv
+coords/10/0.csv
+coords/10/1.csv
+coords/10/2.csv
+coords/10/3.csv
+coords/10/4.csv
+coords/10/5.csv
+coords/2/0.csv
+coords/2/1.csv
+coords/2/2.csv
+coords/2/3.csv
+coords/2/4.csv
+coords/2/5.csv
+coords/3/0.csv
+coords/3/1.csv
+coords/3/2.csv
+coords/3/3.csv
+coords/3/4.csv
+coords/3/5.csv
+coords/4/0.csv
+coords/4/1.csv
+coords/4/2.csv
+coords/4/3.csv
+coords/4/4.csv
+coords/4/5.csv
+coords/5/0.csv
+coords/5/1.csv
+coords/5/2.csv
+coords/5/3.csv
+coords/5/4.csv
+coords/5/5.csv
+coords/6/0.csv
+coords/6/1.csv
+coords/6/2.csv
+coords/6/3.csv
+coords/6/4.csv
+coords/6/5.csv
+coords/7/0.csv
+coords/7/1.csv
+coords/7/2.csv
+coords/7/3.csv
+coords/7/4.csv
+coords/7/5.csv
+coords/8/0.csv
+coords/8/1.csv
+coords/8/2.csv
+coords/8/3.csv
+coords/8/4.csv
+coords/8/5.csv
+coords/9/0.csv
+coords/9/1.csv
+coords/9/2.csv
+coords/9/3.csv
+coords/9/4.csv
+coords/9/5.csv
+coords/10/0.csv
+coords/10/1.csv
+coords/10/2.csv
+coords/10/3.csv
+coords/10/4.csv
+coords/10/5.csv
+coords/11/0.csv
+coords/11/1.csv
+coords/11/2.csv
+coords/11/3.csv
+coords/11/4.csv
+coords/11/5.csv
+coords/12/0.csv
+coords/12/1.csv
+coords/12/2.csv
+coords/12/3.csv
+coords/12/4.csv
+coords/12/5.csv
+coords/13/0.csv
+coords/13/1.csv
+coords/13/2.csv
+coords/13/3.csv
+coords/13/4.csv
+coords/13/5.csv
+coords/14/0.csv
+coords/14/1.csv
+coords/14/2.csv
+coords/14/3.csv
+coords/14/4.csv
+coords/14/5.csv
+coords/15/0.csv
+coords/15/1.csv
+coords/15/2.csv
+coords/15/3.csv
+coords/15/4.csv
+coords/15/5.csv
+coords/16/0.csv
+coords/16/1.csv
+coords/16/2.csv
+coords/16/3.csv
+coords/16/4.csv
+coords/16/5.csv
+coords/17/0.csv
+coords/17/1.csv
+coords/17/2.csv
+coords/17/3.csv
+coords/17/4.csv
+coords/17/5.csv
+coords/18/0.csv
+coords/18/1.csv
+coords/18/2.csv
+coords/18/3.csv
+coords/18/4.csv
+coords/18/5.csv
+coords/19/0.csv
+coords/19/1.csv
+coords/19/2.csv
+coords/19/3.csv
+coords/19/4.csv
+coords/19/5.csv

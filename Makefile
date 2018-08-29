@@ -10,7 +10,7 @@ PROJECT = molopt.exe
 CXX = g++
 
 #Compiler Directions
-CXXFLAGS=-g
+CXXFLAGS=-O3
 
 #Source Files
 SOURCE = $(wildcard *.cpp)
@@ -30,3 +30,7 @@ $(PROJECT): $(OBJECTS)
 .PHONY: clean
 clean:
 	rm -f *.o *.exe *.stackdump *.txt
+
+.PHONY: wipe
+wipe:
+	rm -r -f data/* coords/*

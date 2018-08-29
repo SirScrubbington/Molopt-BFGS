@@ -40,6 +40,14 @@
 	#define RAD2DEG (180.0f/M_PI)
 #endif // RAD2DEG
 
+void makeDirectory(const char * path)
+{
+#if defined(_WIN32)
+	_mkdir(path); // can be used on Windows
+#else 
+	mkdir(path,0733); // can be used on non-Windows
+#endif
+}
 const double tolerance = pow(10,-6);
 
 const double optimal[] = {

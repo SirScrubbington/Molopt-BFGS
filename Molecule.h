@@ -98,7 +98,7 @@ public:
 
 	double getR(double x, double y)
 	{
-		return sqrt(pow(x,2) + pow(y,2));
+		return sqrt(std::pow(x,2) + std::pow(y,2));
 	}
 
 	void getEulerianDistanceMatrix()
@@ -127,7 +127,7 @@ public:
 		for(int j=0;j<n;j++)
 			for(int i=0;i<j;i++)
 			{
-				V = V + ((1.0f/pow(distance->get(i,j),12.0f))-(2.0f/pow(distance->get(i,j),6.0f)));
+				V = V + ((1.0f/std::pow(distance->get(i,j),12.0f))-(2.0f/std::pow(distance->get(i,j),6.0f)));
 			}
 		
 		return V;
@@ -180,8 +180,8 @@ public:
 			{
 				for(int j = m + 1; j < n; j++)
 				{
-					a = 1.0f / pow(distance->get(i,j),14.0f);
-					b = 1.0f / pow(distance->get(i,j),8.0f);
+					a = 1.0f / std::pow(distance->get(i,j),14.0f);
+					b = 1.0f / std::pow(distance->get(i,j),8.0f);
 					
 					c = ((coords[i].x - coords[j].x) * (coords[m].y - coords[i].y));
 					d = ((coords[i].y - coords[j].y) * (coords[j].x - coords[m].x));

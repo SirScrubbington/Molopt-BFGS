@@ -4,17 +4,23 @@ import matplotlib.pyplot as plt
 
 titles = [
 			"Atom By Atom Optimisation - Line Start",
-			"Atom By Atom Optimisation - Random Start",
 			"Atom By Atom Optimisation - Circle Start",
 			"Atom By Atom Optimisation - Square Start",
 			"Iterative Atom Optimisation - Line Start",
-			"Iterative Atom Optimisation - Random Start",
 			"Iterative Atom Optimisation - Circle Start",
 			"Iterative Atom Optimisation - Square Start",
-			"Centre Orientated Optimisation - Line Start",
-			"Centre Orientated Optimisation - Random Start",
-			"Centre Orientated Optimisation - Circle Start",
-			"Centre Orientated Optimisation - Square Start"
+			"Brute Force Atom Optimisation - Line Start",
+			"Brute Force Atom Optimisation - Circle Start",
+			"Brute Force Atom Optimisation - Square Start",
+			"Atom By Atom Optimisation - Line Start with BFGS",
+			"Atom By Atom Optimisation - Circle Start with BFGS",
+			"Atom By Atom Optimisation - Square Start with BFGS",
+			"Iterative Atom Optimisation - Line Start with BFGS",
+			"Iterative Atom Optimisation - Circle Start with BFGS",
+			"Iterative Atom Optimisation - Square Start with BFGS",
+			"Brute Force Atom Optimisation - Line Start with BFGS",
+			"Brute Force Atom Optimisation - Circle Start with BFGS",
+			"Brute Force Atom Optimisation - Square Start with BFGS"
 		 ]
 
 def graphCSV(filename):
@@ -31,6 +37,7 @@ def graphCSV(filename):
 			trial = int(data[0])
 			n = int(data[1])
 			
+			iter = data[-4]
 			opt = data[-3]
 			cost = data[-2]
 			time = data[-1]
@@ -41,7 +48,7 @@ def graphCSV(filename):
 				y.append(float(iy))
 		
 			plt.suptitle(titles[trial])
-			plt.title("Atoms: " + str(n) + " Cost: " + str(cost) + " Best: " + opt + " Time: " + str(time),y=0.96)
+			plt.title("Atoms: " + str(n) + " Cost: " + str(cost) + " Best: " + opt + " Time: " + str(time) + "Iters: " + iter,y=1,fontsize=8)
 		
 			plt.xlabel("x coordinates")
 			plt.ylabel("y coordinates")

@@ -52,15 +52,6 @@ public:
 	
 	int n;
 	
-	// Member Functions
-	void random()
-	{
-		for(int i = 0; i < n; i++)
-		{
-			alphas[i] = DEG2RAD * ((rand() % 180) - 180);
-		}
-	}
-	
 	void getRealAngleList()
 	{
 		real[0] = alphas[0];
@@ -151,6 +142,7 @@ public:
 		return getSystemEnergy();
 	}
 	
+	// calculate gradients for BFGS
 	double operator()(const VectorXd& x, VectorXd& grad)
 	{
 		double a, b, c, d;

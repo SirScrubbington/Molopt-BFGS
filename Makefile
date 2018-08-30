@@ -29,8 +29,18 @@ $(PROJECT): $(OBJECTS)
 #Clean up additional files
 .PHONY: clean
 clean:
-	rm -f *.o *.exe *.stackdump *.txt
+	rm -f *.o *.exe *.stackdump *.txt *.csv
+	make wipe
 
 .PHONY: wipe
 wipe:
-	rm -r -f data/* coords/*
+	rm -r -f data coords
+
+.PHONY: graph
+graph:
+	python makegraphs.py coords
+
+.PHONY: combine
+combine:
+	python include2actual.py molopt.cpp
+	g++ -O3 -o combine combine.cpp

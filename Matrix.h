@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <stdexcept>
 
-template <class T>
+template <typename T>
 class Matrix
 {
 public:
@@ -23,7 +23,12 @@ public:
 		data = (T*)malloc(sizeof(*data)*x*y);
 	}
 	
-	inline void set(int i, int j, double v)
+	~Matrix()
+	{
+		free(data);
+	}
+	
+	inline void set(int i, int j, T v)
 	{
 		if((i*x+j) > (x*y))
 			throw std::invalid_argument("Attempting to access out of bounds index");

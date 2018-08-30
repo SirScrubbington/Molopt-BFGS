@@ -2,11 +2,8 @@ touch img/t.png
 rm img/*.png
 rm results.txt
 
-for j in {1..20}
+for i in {2..500}
 do
-  for i in {2..61}
-  do
-    echo $j,$i
-    ./molopt.exe $i
-  done
+  echo $i atoms
+  ./molopt.exe $i -c -d -f best.csv >> log.txt
 done

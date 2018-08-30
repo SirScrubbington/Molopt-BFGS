@@ -1,6 +1,6 @@
 // Filename: molopt.cpp
 // Author: Scrubbs
-// Date: 2018-8-7
+// Date: 20nTests-8-7
 // Description: molopt implementation file
 
 #ifndef I_MY3sy2M43uDRW3krlK4Oy3Et3o1B7
@@ -82,10 +82,53 @@ double BeginOrientatedAnnealing
 	return mol->updateSystem();
 }
 
+double bruteForceMolecule
+(
+	int n,
+	int iters,
+	Molecule ** molecule
+)
+{
+	double bestAngle, curTemp, bestTemp;
+	
+	if (*molecule == NULL)
+	{
+		*molecule = new Molecule(n);
+	}
+	
+	Molecule * mol = *molecule;
+	
+	bestTemp = mol->updateSystem();
+	
+	for(int i = 0; i < n; i++)
+	{
+		bestAngle = mol->alphas[i];
+		
+		for(int j = -180; j <= 180; j += 360/iters)
+		{
+			mol->alphas[i] = j;
+			
+			curTemp = mol->updateSystem();
+			
+			if(curTemp < bestTemp)
+			{
+				bestAngle = j;
+				bestTemp = curTemp;
+			}
+			else
+			{
+				mol->alphas[i] = bestAngle;
+			}
+		}
+	}
+	return mol->updateSystem();
+}
+
 double IterativeAnnealing
 (
 	int n, 
 	int iters,
+	int passes,
 	temperaturefunc temp,
 	Molecule ** molecule
 )
@@ -96,26 +139,21 @@ double IterativeAnnealing
 	}
 
 	Molecule * mol = *molecule;
+	double T,E,pE,prev;
 	
-	double E,pE,prev;
-	
-	//int k = 1;
-	
-	for(int i = 0; i < iters; i++)
+	for(int i = 1; i < iters; i++)
 	{
+		T = temp((double)n/(double)i);
 		
-		auto T = temp((double)n/(double)i);
-
-		for(int a = 1; a < n; a++)
+		for(int j = 0; j < n; j++)
 		{
 			pE = mol->updateSystem();
-			
-			double tv = mol->alphas[a];
 				
-			mol->alphas[a] = randAngle();
-
+			double tv = mol->alphas[j];
+				
+			mol->alphas[j] = randAngle();
+				
 			E = mol->updateSystem();
-
 			if(E > pE)
 			{
 				double delta = (E - pE);
@@ -126,12 +164,18 @@ double IterativeAnnealing
 				}
 				else
 				{
-					mol->alphas[a] = tv;
+					mol->alphas[j] = tv;
 				}
 			}
 		}
 	}
+
 	return mol->updateSystem();
+}
+
+double getError(double target, double found)
+{
+	return (((target - found)/target)*100.0f);
 }
 
 double getTime(clock_t begin, clock_t end)
@@ -139,48 +183,121 @@ double getTime(clock_t begin, clock_t end)
 	return (double)(end-begin)/(CLOCKS_PER_SEC);
 }
 
+#define WRITE_ALPHAS 1
+#define WRITE_COORDS 2
+#define NO_PRINT 4
+
 int main(int argc, char ** argv)
 {
 	int n = 0;
 	
+	short properties = 0, scorefile = 0;
+	
+	/*
 	if (argc > 1)
 		n = atoi(argv[1]);
 	else
-		printf("Usage: ./molopt[.exe/.out] natoms");
+		if(!(properties & NO_PRINT)) printf("Usage: ./molopt[.exe/.out] natoms");
 	
 	if(!n)
 		return 0;
+	*/
 	
-	gen = new std::mt19937(time(0));
+	if (argc > 1)
+	{
+		n = atoi(argv[1]);
+		
+		for(int i = 2; i < argc; i++)
+		{
+			if(strcmp(argv[i],"-a") == 0) 
+			{
+				properties |= WRITE_ALPHAS;
+			}
+			else if(strcmp(argv[i],"-c") == 0)
+			{
+				properties |= WRITE_COORDS;
+			}
+			else if(strcmp(argv[i],"-q") == 0)
+			{
+				properties |= NO_PRINT;
+			}
+			else if(strcmp(argv[i],"-f") == 0 && argc > i+1)
+			{
+				scorefile = i + 1;
+			}
+		}
+	}
+	else
+	{
+		if(!(properties & NO_PRINT)) printf("Usage: ./molopt[.exe/.out] natoms [-a] [-c] [-np] [-f filename]");
+	}
 	
-	std::fstream fs;
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	// 							   Algorithm Setup					  	 	  //
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 	
-	clock_t begin,end;
+	////////////////////////////////////////////////////////////////////////////
+	// 							Constant Testing Data						  //
+	////////////////////////////////////////////////////////////////////////////
 	
-	// Constant testing data
+	const int nTests = 18; // the number of tests which will be performed
 	
 	const int nIterations = 50; // Number of annealing passes
 	
-	LBFGSParam<double> param; // Default parameters for the LBFGS routine
-	param.max_iterations = 50; // Maximum number of LBFGS iterations
+	gen = new std::mt19937(time(0)); // Seed random number generator
 	
-	LBFGSSolver<double> solver(param);
+	std::fstream fs; // Filestream for writing data
 	
-	std::string directory = "data/";
-	std::string subdir = std::to_string(n);
-	std::string writepath = directory + subdir + "/";
-	
-	makeDirectory(writepath.c_str());
+	clock_t begin,end; // clock structures for timing the execution times of each algorithm
 	
 	Molecule circmol(n), squaremol(n);
 	
+	std::vector<double> optimal;
+	
+	// if there is an existing file with best costs, read from it
+	
+	std::ifstream inFile;
+	
+	if (scorefile > 0)
+	{
+		inFile.open(argv[scorefile]);
+	}
+	else
+	{
+		inFile.open("found.csv");
+	}
+	
+	if (inFile)
+	{
+		double outvar;
+		
+		while(inFile >> outvar)
+		{
+			optimal.push_back(outvar);
+		}
+	}
+	
+	// for any undefined best costs, assign that index of the best costs array to zero
+	
+	for(int i = optimal.size(); i < n-1; i++)
+	{
+		optimal.push_back(0.0f);
+	}
+	
+	inFile.close();
+	
+	// configure the default angles for the square template
 	double circlangle = DEG2RAD * 360.0f / n;
-	double squarangle = DEG2RAD * 90.0f;
 	
 	for(int i = 0; i < n; i++)
 	{
 		circmol.alphas[i] = circlangle;
 	}
+
+	// configure the default angles for the circular template
+	double squarangle = DEG2RAD * 90.0f;
 	
 	if(n / 3 > 0)
 	{
@@ -191,257 +308,431 @@ int main(int argc, char ** argv)
 		}
 	}
 	
-	Molecule * molecules[12];
-	double times[12] = {0.0f};
-	double costs[12] = {0.0f};
+	Molecule * molecules[nTests];
 	
-	// loop over all atoms 'niters' times at once, then progress to next atom
+	double times[nTests] = {0.0f};
+	double costs[nTests] = {0.0f};
+	int iters[nTests] = {0};
+	
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	// 							Algorithm Application				  	 	  //
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 
-	// linear configuration
+	////////////////////////////////////////////////////////////////////////////
+	// loop over all atoms 'niters' times at once, then progress to next atom //
+	////////////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////// linear configuration ///////////////////////////
 	
 	begin = clock();
 	
 	molecules[0] = new Molecule(n);
 
-	//costs[0] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[0]);
+	costs[0] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[0]);
 	
 	end = clock();
 
 	times[0] = getTime(begin,end);
 	
-	printf("Time 0: %f\n",times[0]);
+	iters[0] = nIterations;
 
-	// circular configuration
+	////////////////////////// circular configuration ///////////////////////////
 	
 	begin = clock();
 	
 	molecules[1] = new Molecule(circmol);
-	molecules[1]->updateSystem();
 	
-	//costs[1] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[1]);
+	costs[1] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[1]);
 	
 	end = clock();
 	
 	times[1] = getTime(begin,end);
 	
-	printf("Time 2: %f\n",times[1]);
-	
-	// square configuration
+	iters[1] = nIterations;
+	////////////////////////// square configuration ////////////////////////////
 	
 	begin = clock();
 
 	molecules[2] = new Molecule(squaremol);
-	molecules[2]->updateSystem();
-	//costs[2] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[2]);
+	
+	costs[2] = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[2]);
 	
 	end = clock();
 	
 	times[2] = getTime(begin,end);
 	
-	printf("Time 3: %f\n",times[2]);
+	iters[2] = nIterations;
 	
-	// loop over each molecules 'niters' times, once for each every iteration
-
-	// linear configuration
+	////////////////////////////////////////////////////////////////////////////
+	// 				  annealing search atom optimisation method		  		  //
+	////////////////////////////////////////////////////////////////////////////
+	
+	const int passes = 10; // number of repeats for repeated search algorithm
+	
+	/////////////////////////// linear configuration ///////////////////////////
 	
 	begin = clock();
 	
 	molecules[3] = new Molecule(n);
-	molecules[3]->updateSystem();
 	
-	//costs[3] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[3]);
+	costs[3] = IterativeAnnealing(n,nIterations,passes,tempfunc,&molecules[3]);
 	
 	end = clock();
 	
 	times[3] = getTime(begin,end);
 	
-	printf("Time 0: %f\n",times[3]);
+	iters[3] = nIterations;
 
-	// circular configuration
+	////////////////////////// circular configuration ///////////////////////////
 	
 	begin = clock();
 	
 	molecules[4] = new Molecule(circmol);
-	molecules[4]->updateSystem();
 	
-	//costs[4] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[4]);
+	costs[4] = IterativeAnnealing(n,nIterations,passes,tempfunc,&molecules[4]);
 	
 	end = clock();
 	
 	times[4] = getTime(begin,end);
 	
-	printf("Time 0: %f\n",times[4]);
+	iters[4] = nIterations;
+		
 	
-	// square configuration
+	////////////////////////// square configuration ////////////////////////////
 		
 	begin = clock();
 	
 	molecules[5] = new Molecule(squaremol);
-	molecules[5]->updateSystem();
 	
-	//costs[5] = IterativeAnnealing(n,nIterations,tempfunc,&molecules[5]);
+	costs[5] = IterativeAnnealing(n,nIterations,passes,tempfunc,&molecules[5]);
 	
 	end = clock();
 	
 	times[5] = getTime(begin,end);
 	
-	printf("Time 0: %f\n",times[5]);
+	iters[5] = nIterations;
 	
-	/*
 	
-	-- BFGS METHOD --
+	////////////////////////////////////////////////////////////////////////////
+	// 					brute force atom optimisation method		  	 	  //
+	////////////////////////////////////////////////////////////////////////////
 	
-	*/
+	const int angleIter = 50;
+	
+	/////////////////////////// linear configuration ///////////////////////////
 	
 	begin = clock();
 	
-	molecules[6] = new Molecule(&(molecules[0]));
+	molecules[6] = new Molecule(n);
 	
-	costs[6]// = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[6]);
+	costs[6] = bruteForceMolecule(n,angleIter,&molecules[6]);
 	
 	end = clock();
 	
 	times[6] = getTime(begin,end);
 	
-	printf("Time 6: %f\n",times[6]);
+	iters[6] = angleIter;
+	
 
-	// circular configuration
+	////////////////////////// circular configuration ///////////////////////////
 	
 	begin = clock();
 	
-	molecules[7] = new Molecule(&(molecules[1]));
+	molecules[7] = new Molecule(circmol);
 	
-	costs[7]// = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[7]);
+	costs[7] = bruteForceMolecule(n,angleIter,&molecules[7]);
 	
 	end = clock();
 	
 	times[7] = getTime(begin,end);
 	
-	printf("Time 7: %f\n",times[7]);
+	iters[7] = angleIter;
 	
-	// square configuration
-	
+	////////////////////////// square configuration ////////////////////////////
+		
 	begin = clock();
-
-	molecules[8] = new Molecule(&(molecules[2]));
 	
-	costs[8]// = BeginOrientatedAnnealing(n,nIterations,tempfunc,&molecules[8]);
+	molecules[8] = new Molecule(squaremol);
+	
+	costs[8] = bruteForceMolecule(n,angleIter,&molecules[8]);
 	
 	end = clock();
 	
 	times[8] = getTime(begin,end);
 	
-	printf("Time 8: %f\n",times[8]);
+	iters[8] = angleIter;
 	
-	// loop over each molecules 'niters' times, once for each every iteration
-
-	// linear configuration
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	// 								BFGS Optimizer					  	 	  //
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	
+	LBFGSParam<double> param; // Default parameters for the LBFGS routine
+	param.max_iterations = 50; // Maximum number of LBFGS iterations
+	LBFGSSolver<double> solver(param); // LBFGS++ Solver object for applying the BFGS algorithm
+	
+	////////////////////////////////////////////////////////////////////////////
+	// loop over all atoms 'niters' times at once, then progress to next atom //
+	////////////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////// linear configuration ///////////////////////////
 	
 	begin = clock();
 	
-	molecules[9] = new Molecule(&(molecules[3]));
-	
-	costs[9];
+	molecules[9] = new Molecule(*molecules[0]);
+
+	solver.minimize((*molecules[9]),molecules[9]->alphas,costs[9]);
 	
 	end = clock();
-	
+
 	times[9] = getTime(begin,end);
 	
-	printf("Time 9: %f\n",times[9]);
+	iters[9] = param.max_iterations;
 
-	// circular configuration
+	////////////////////////// circular configuration ///////////////////////////
 	
 	begin = clock();
 	
-	molecules[10] = new Molecule(&(molecules[4]));
-	
-	costs[10];
+	molecules[10] = new Molecule(*molecules[1]);
+
+	solver.minimize((*molecules[10]),molecules[10]->alphas,costs[10]);
 	
 	end = clock();
 	
 	times[10] = getTime(begin,end);
 	
-	printf("Time 0: %f\n",times[10]);
+	iters[10] = param.max_iterations;
+
+	////////////////////////// square configuration ////////////////////////////
 	
-	// square configuration
-		
 	begin = clock();
+
+	molecules[11] = new Molecule(*molecules[2]);
 	
-	molecules[11] = new Molecule(&(molecules[5]));
-	
-	costs[11];
+	solver.minimize((*molecules[11]),molecules[11]->alphas,costs[11]);
 	
 	end = clock();
 	
 	times[11] = getTime(begin,end);
 	
-	printf("Time 0: %f\n",times[11]);
+	iters[11] = param.max_iterations;
+	
+	
+	////////////////////////////////////////////////////////////////////////////
+	// 					brute force atom optimisation method		  	 	  //
+	////////////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////// linear configuration ///////////////////////////
 	
 	begin = clock();
 	
-	std::string dFolder = "data/",dSubfolder;
-	std::string cFolder = "coords/",cSubfolder;
+	molecules[12] = new Molecule(*molecules[3]);
 	
-	dFolder = dFolder + std::to_string(n);
-	cFolder = cFolder + std::to_string(n);
-	
-	makeDirectory(cFolder.c_str());
-	makeDirectory(dFolder.c_str());
-	
-	cFolder = cFolder + "/";
-	dFolder = dFolder + "/";
-	
-	for(int j = 0; j < 6; j++)
-	{
-		Molecule * mol = molecules[j];
-		
-		cSubfolder = cFolder + std::to_string(j) + ".csv";
-		
-		fs.open(cSubfolder,std::fstream::app);
-		
-		fs << j << "," << mol->n << ",";
-		
-		for(int i = 0; i < n; i++)
-		{
-			fs << mol->coords.at(i).x << ":" << mol->coords.at(i).y;
-			
-			if(i <n-1)
-				fs << ",";
-			
-			else
-				fs << "," << optimal[n-2] << "," << costs[j] << "," << times[j] << "\n";
-		}
-		
-		fs.close();
-		
-		dSubfolder = dFolder + std::to_string(j) + ".csv";
-		
-		fs.open(dSubfolder,std::fstream::app);
-		
-		if(fs)
-		{
-			for (int i=0;i<n;i++)
-			{
-				
-				fs << mol->alphas[i];
-				
-				if(i<n-1)
-				{
-					fs << ",";
-				}
-				else
-				{
-					fs << "," << costs[j] << times[j] << "\n";
-				}
-			}
-		}
-		
-		fs.close();
-	}
+	solver.minimize((*molecules[12]),molecules[12]->alphas,costs[12]);
 	
 	end = clock();
 	
-	printf("Time to write: %f seconds.\n",getTime(begin,end));
+	times[12] = getTime(begin,end);
+	
+	iters[12] = param.max_iterations;
+	
+	////////////////////////// circular configuration ///////////////////////////
+	
+	begin = clock();
+	
+	molecules[13] = new Molecule(*molecules[4]);
+	
+	solver.minimize((*molecules[13]),molecules[13]->alphas,costs[13]);
+	
+	end = clock();
+	
+	times[13] = getTime(begin,end);
+	
+	iters[13] = param.max_iterations;
+	
+	
+	////////////////////////// square configuration ////////////////////////////
+		
+	begin = clock();
+	
+	molecules[14] = new Molecule(*molecules[5]);
+	
+	solver.minimize((*molecules[14]),molecules[14]->alphas,costs[14]);
+	
+	end = clock();
+	
+	times[14] = getTime(begin,end);
+	
+	iters[14] = param.max_iterations;
+	
+	////////////////////////////////////////////////////////////////////////////
+	// 					brute force atom optimisation method		  	 	  //
+	////////////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////// linear configuration ///////////////////////////
+	
+	begin = clock();
+	
+	molecules[15] = new Molecule(*molecules[6]);
+	
+	solver.minimize((*molecules[15]),molecules[15]->alphas,costs[15]);
+	
+	end = clock();
+	
+	times[15] = getTime(begin,end);
+	
+	iters[15] = param.max_iterations;
+	
+
+	////////////////////////// circular configuration ///////////////////////////
+	
+	begin = clock();
+	
+	molecules[16] = new Molecule(*molecules[7]);
+	
+	solver.minimize((*molecules[16]),molecules[16]->alphas,costs[16]);
+	
+	end = clock();
+	
+	times[16] = getTime(begin,end);
+	
+	iters[16] = param.max_iterations;
+	
+	
+	////////////////////////// square configuration ////////////////////////////
+		
+	begin = clock();
+	
+	molecules[17] = new Molecule(*molecules[8]);
+	
+	solver.minimize((*molecules[17]),molecules[17]->alphas,costs[17]);
+	
+	end = clock();
+	
+	times[17] = getTime(begin,end);
+	
+	iters[17] = param.max_iterations;
+		
+	//if(!(properties & NO_PRINT)) printf("Time 17: %f\n",times[17]);
+	
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	// 								Output Writing					  	 	  //
+	////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	
+	////////////////////////////////////////////////////////////////////////////
+	// 								Filepath Setup 							  //
+	////////////////////////////////////////////////////////////////////////////
+	
+	// Setup data write directories
+	
+	for(int j = 0; j < nTests; j++)
+	{
+		if (costs[j] < optimal[n-2])
+		{
+			optimal[n-2] = costs[j];
+		}
+	}
+	
+	if (scorefile > 0)
+	{
+		fs.open(argv[scorefile],std::fstream::out);
+	}
+	else
+	{
+		fs.open("found.csv",std::fstream::out);
+	}
+	
+	for(int i = 0; i < optimal.size(); i++)
+	{
+		fs << optimal[i] << "\n";
+	}
+	
+	fs.close();
+	
+	if(!(properties & NO_PRINT)) 
+	{
+		printf("Atoms\tOptimal\tFound\tError\tGen\tTime\n");// begin table
+		for(int i = 0; i < 18; i++)
+		{
+			printf("%i\t%2.2f\t%2.2f\t%2.2f\t%i\t%2.2f\n",n,optimal[n-2],costs[i],getError(optimal[n-2],costs[i]),iters[i],times[i]);	
+		}
+	}
+	
+	if(properties & WRITE_COORDS)
+	{
+		makeDirectory("coords");
+		std::string cFolder = "coords/",cSubfolder;
+		cFolder = cFolder + std::to_string(n);
+		makeDirectory(cFolder.c_str());
+		cFolder = cFolder + "/";
+		
+		for(int j = 0; j < nTests; j++)
+		{
+			Molecule * mol = molecules[j];
+			
+			cSubfolder = cFolder + std::to_string(j) + ".csv";
+			
+			fs.open(cSubfolder,std::fstream::app);
+			
+			fs << j << "," << mol->n << ",";
+			
+			for(int i = 0; i < n; i++)
+			{
+				fs << mol->coords.at(i).x << ":" << mol->coords.at(i).y;
+				
+				if(i <n-1)
+					fs << ",";
+				
+				else
+					fs << "," << iters[j] << "," << optimal[n-2] << "," << costs[j] << "," << times[j] << "\n";
+			}	
+			fs.close();
+		}
+	}
+
+	if(properties & WRITE_ALPHAS)
+	{
+		
+		makeDirectory("alphas");
+		std::string dFolder = "alphas/",dSubfolder;	
+		dFolder = dFolder + std::to_string(n);
+		makeDirectory(dFolder.c_str());
+		dFolder = dFolder + "/";
+		
+		for(int j = 0; j < nTests; j++)
+		{
+			Molecule * mol = molecules[j];
+			
+			dSubfolder = dFolder + std::to_string(j) + ".csv";
+			
+			fs.open(dSubfolder,std::fstream::app);
+			
+			if(fs)
+			{
+				for (int i=0;i<n;i++)
+				{
+					
+					fs << mol->alphas[i];
+					
+					if(i<n-1)
+					{
+						fs << ",";
+					}
+					else
+					{
+						fs << "," << iters[j] << "," << costs[j] << "," << times[j] << "\n";
+					}
+				}
+			}
+			
+			fs.close();
+		}
+	}
 }
 
 #endif // I_MY3sy2M43uDRW3krlK4Oy3Et3o1B7
